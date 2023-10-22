@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Regla Falsa</title>
+</head>
+<body>
+    <h1>Regla Falsa</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="number" name="xi" placeholder="a">
+        <input type="number" name="xs" placeholder="b">
+        <input type="submit" value="Ejecutar">
+    </form>
+
+    {% if ReglaFalsaModel %}
+        <h2>Resultado</h2>
+        <p>x = {{ ReglaFalsaModel.x }}</p>
+        <p>Iteraciones = {{ ReglaFalsaModel.iteracions }}</p>
+    {% endif %}
+</body>
+</html>
+
