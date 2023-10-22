@@ -1,84 +1,100 @@
-%Bisección: se ingresa el valor inicial y final del intervalo (xi, xs), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
+%Newton: se ingresa el valor inicial (x0), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
-function [s,E,fm] = FalsaPosicion(xi,xs,Tol,niter)
+function [n,xn,fm, E] = secante(x0,x1,Tol,niter)
     syms x
-    
-    f(x)=-7*log(x)+x-8;
-    %f(x)=log(sin(x)^2 + 1)-(1/2);
-    %f(x)=x^2-5*x+6*sin(x);
-    %f(x)=exp(-x-2)-2*x-2;
 
-    fi=eval(subs(f,xi));
-    fs=eval(subs(f,xs));
-    if fi==0
-        s=xi;
-        E=0;
-        fprintf('%f es raiz de f(x)',xi)
-    elseif fs==0
-        s=xs;
-        E=0;
-        fprintf('%f es raiz de f(x)',xs)
-    elseif fs*fi<0
+        f =((exp(-x))*(-1+x))+(x^(2/3))-92;
+        %f = log(sin(x)^2 + 1)-(1/2);
+        %f=sin(2*x)-(x/(3))^3+0.1;
+
+        fi = eval(subs(f, x0));
+        fs = eval(subs(f, x1));
+        
         c=0;
-        xm= xi - (fi * (xi - xs)) / (fi - fs);
-        fm(c+1)=eval(subs(f,xm));
+        fm(c+1) = eval(subs(f,x0));
         fe=fm(c+1);
         E(c+1)=Tol+1;
         error=E(c+1);
-        
-        Iteration = [];
-        a = [];
-        b = [];
-        Xm = [];
-        func = [];
-        Error = [];
+        xn= x1 - ((fs * (x1 - x0)) / (fs - fi));
+        fn= eval(subs(f, xn));
+
+       if fi==0
+        s=xi;
+        E=0;
+        fprintf('%f es raiz de f(x)',x0)
+        return
+       elseif fs==0
+        s=xs;
+        E=0;
+        fprintf('%f es raiz de f(x)',x1)
+        return
+       elseif fn ==0
+        s=xn;
+        E=0;
+        fprintf('%f es raiz de f(x)',xn)
+
+       end 
+
+       Iteration = [];
+       Xn  = [];
+       Fxn = [];
+       Error = []; 
 
 
-        while error>Tol && fe~=0 && c<niter
-            Iteration = [Iteration,c];
-            a = [a,xi];
-            b = [b, xs]; 
-            Xm = [Xm, xm]; 
-            func = [func, fe]; 
-            Error = [Error, error];
+        while error>Tol && fn ~= 0 && c<niter
    
+            Iteration = [Iteration,c]; %#ok<AGROW>
+            Xn  = [Xn, xn]; %#ok<AGROW>
+            %Fxn = [Fxn, fi];  %#ok<AGROW>
+            Error = [Error, error]; %#ok<AGROW>
+        
 
 
-            if fi*fe<0
-                xs=xm;
-                fs=eval(subs(f,xs));
-            else
-                xi=xm;
-                fi=eval(subs(f,xi));
-            end
-            xa=xm;
-            xm=xi - (fi * (xi - xs)) / (fi - fs);
-            fm(c+2)=eval(subs(f,xm));
+            x0 = x1;
+            x1 = xn;
+            fi = eval(subs(f, x0));
+            fs = eval(subs(f, x1));
+            xn = x1 - ((fs * (x1 - x0)) / (fs - fi));
+            fn = eval(subs(f, xn));
+            
+            fm(c+2)=eval(subs(f,xn));
             fe=fm(c+2);
-            %E(c+2)=abs(xa-xm);
-            error=abs(xa-xm);
+            E(c+2)=abs(xn-x1);
+            error=E(c+2);
             c=c+1;
 
+            Fxn = [Fxn, fs];  %#ok<AGROW>
+
+            if (fs - fi) == 0
+               s=x0;
+               n=c;
+               printf('Cannot continue with the method given that the denominator is zero.  %f es una aproximación de una raiz de f(x) con una tolerancia= %f \n',xn,Tol)
+            end 
 
         end
 
-        tabla = table(Iteration', a', Xm', b', func', Error', 'VariableNames', {'Iteration', 'a', 'xm', 'b', 'f(xm)', 'Error'});
-        %T = table(Iteration, a, b, Xm, func, Error);
+
+        tabla = table(Iteration', Xn', Fxn', Error', 'VariableNames', {'Iteration', 'xn', 'f(xn)', 'E'});
         disp(tabla)
 
-        if fe==0
-           s=xm;
-           fprintf('%f es raiz de f(x)',xm) 
-        elseif error<Tol
-           s=xm;
-           fprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %f',xm,Tol)
-        else 
-           s=xm;
-           fprintf('Fracasó en %f iteraciones',niter) 
-        end
-    else
-       fprintf('El intervalo es inadecuado')         
-    end 
+        if fn==0
+           s=x0;
+           n=c;
+           fprintf('%f es raiz de f(x) \n',xn)
 
-    
+        elseif error<Tol
+           s=x0;
+           n=c;
+           fprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %.10f \n',xn,Tol)
+
+        % elseif fn==0
+        %    s=x0;
+        %    n=c;
+        %    fprintf('%f es una posible raiz múltiple de f(x) \n',x0)
+        else 
+           s=x0;
+           n=c;
+           fprintf('Fracasó en %f iteraciones \n',niter) 
+        end
+        
 end

@@ -13,11 +13,19 @@
         <input type="submit" value="Ejecutar">
     </form>
 
-    {% if ReglaFalsaModel %}
-        <h2>Resultado</h2>
-        <p>x = {{ ReglaFalsaModel.x }}</p>
-        <p>Iteraciones = {{ ReglaFalsaModel.iteracions }}</p>
+    {% block content %}
+    <h1>Regla falsa</h1>
+
+    {% if request.method == "POST" %}
+        {% show_matlab_table result %}
+    {% else %}
+        <form action="" method="post">
+            <input type="number" name="xi" placeholder="Xi">
+            <input type="number" name="xs" placeholder="Xs">
+            <input type="submit" value="Calcular">
+        </form>
     {% endif %}
+{% endblock %}
 </body>
 </html>
 
