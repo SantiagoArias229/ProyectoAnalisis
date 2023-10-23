@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Biseccion</title>
+</head>
+<body>
+    <h1>Metodo de Biseccion</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="text" name="func" placeholder="Función">
+        <input type="number" name="xi" placeholder="a">
+        <input type="number" name="xs" placeholder="b">
+        <input type="text" name="tol" placeholder="Toleracia">
+        <input type="number" name="iteraciones" placeholder="Iteraciones">
+        <input type="submit" value="Ejecutar">
+    </form>
+
+    {% if biseccion_model %}
+        <h2>Resultado</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Iteration</th>
+                    <th>a</th>
+                    <th>xi</th>
+                    <th>b</th>
+                    <th>f(xi)</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in tabla %}
+                <tr>
+                    <td>{{ row.Iteration }}</td>
+                    <td>{{ row.a }}</td>
+                    <td>{{ row.xi }}</td>
+                    <td>{{ row.b }}</td>
+                    <td>{{ row.f }}</td>
+                    <td>{{ row.Error }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

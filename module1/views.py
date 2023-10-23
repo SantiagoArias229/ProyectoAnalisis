@@ -1,12 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import *
+import matlab.engine
+import pandas as pd
 # Create your views here.
+
 def home(request):
     return render(request, "home.html")
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from .models import ReglaFalsaModel
 
 def reglafalsa(request):
     if request.method == "POST":
@@ -17,7 +18,6 @@ def reglafalsa(request):
         niter = 100.0
 
         # Ejecutar el código de MATLAB
-        import matlab.engine
         eng = matlab.engine.start_matlab()
         x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
         # Obtener la tabla de MATLAB
@@ -68,3 +68,38 @@ def show_matlab_table(json_table):
 
     # Devolver el código HTML de la tabla
     return html_table
+
+
+def biseccion(request):
+    if request.method == "POST":
+        # Ejecutar el código de MATLAB        
+        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
+        # Obtener la tabla de MATLAB
+
+        eng = matlab.engine.start_matlab()
+
+        resultado = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]))
+        
+        a = matlab.double(resultado)
+        
+        
+        biseccion_model = BiseccionModel(func = request.POST["func"], xi = request.POST["xi"], xs=request.POST["xs"], tol = request.POST["tol"], iteraciones = request.POST["iteraciones"])
+        
+        
+        
+        tabla_dict = [{'Iteration': row[0], 'a': row[1], 'xi': row[2], 'b': row[3], 'f': row[4], 'Error': row[5]} for row in a]
+        
+        print(tabla_dict)
+        
+        context = {
+        'tabla': tabla_dict,
+        'biseccion_model': biseccion_model,
+        }
+        
+        biseccion_model.save()
+        
+        
+        return render(request, "biseccion.html", context)
+
+    else:
+        return render(request, "biseccion.html")
