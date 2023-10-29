@@ -1,0 +1,63 @@
+{% extends 'home.html' %}
+
+{% block title %}Secante{% endblock %}
+
+{% block content %}
+    <h1>Metodo de la secante </h1>
+    <h2>Hola<h2>
+    <br>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="text" name="func" class="form-control" placeholder="Función">
+        <br>
+        <input type="number" name="xi" class="form-control" placeholder="a">
+        <br>
+        <input type="number" name="xs" class="form-control" placeholder="b">
+        <br>
+        <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
+        <br>
+        <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
+        <br>
+        <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+    </form>
+    {% if request.method == 'POST' %}
+
+    {% with func=request.POST.get('func'), xi=request.POST.get('xi'), xs=request.POST.get('xs'), tol=request.POST.get('tol'), iteraciones=request.POST.get('iteraciones') %}
+
+        {# Cargar la tabla CSV #}
+        {% with csv_file = open('tabsecante.csv') %}
+            {% with csv_reader = csv.reader(csv_file) %}
+                {% with csv_data = list(csv_reader) %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                {% for header in csv_data[0] %}
+                                    <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in csv_data[1:] %}
+                                <tr>
+                                    {% for cell in row %}
+                                        <td>{{ cell }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endwith %}
+            {% endwith %}
+        {% endwith %}
+
+        {# Cargar la imagen #}
+        {% with image_file = open('grafsecante.png', 'rb') %}
+            <img src="data:image/png;base64,{{ image_file.read().encode('base64') }}" alt="Imagen">
+        {% endwith %}
+
+    {% endwith %}
+
+{% endif %}
+        
+    {% endif %}
+{% endblock %}

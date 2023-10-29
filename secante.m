@@ -1,8 +1,8 @@
-%Newton: se ingresa el valor inicial (x0), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
-function [n,xn,fm, E] = secante(x0,x1,Tol,niter)
+function [n,xn,fm, E] = secante(func,x0,x1,Tol,niter)
     syms x
 
+        %f= str2sym(func);
         f =((exp(-x))*(-1+x))+(x^(2/3))-92;
         %f = log(sin(x)^2 + 1)-(1/2);
         %f=sin(2*x)-(x/(3))^3+0.1;
@@ -76,6 +76,21 @@ function [n,xn,fm, E] = secante(x0,x1,Tol,niter)
 
         tabla = table(Iteration', Xn', Fxn', Error', 'VariableNames', {'Iteration', 'xn', 'f(xn)', 'E'});
         disp(tabla)
+        matriz = table2array(tabla);
+        csvwrite('tabsecante.csv', matriz);
+
+        xplot=((xn-2):0.1:(xn+2));
+        hold on
+        yline(0);
+        plot(xplot,eval(subs(f,xplot)));
+        img = getframe(gcf);
+        imwrite(img.cdata, 'grafsecante.png');
+        hold off
+
+      
+
+      
+        
 
         if fn==0
            s=x0;
@@ -95,6 +110,7 @@ function [n,xn,fm, E] = secante(x0,x1,Tol,niter)
            s=x0;
            n=c;
            fprintf('Fracasó en %f iteraciones \n',niter) 
+        
         end
         
 end
