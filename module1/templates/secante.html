@@ -1,63 +1,61 @@
 {% extends 'home.html' %}
 
-{% block title %}Secante{% endblock %}
-
 {% block content %}
-    <h1>Metodo de la secante </h1>
-    <h2>Hola<h2>
+{% block title %}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
+        
+        .title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe5b4;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+    <div class="title-container">
+        <h1 class="title text-gray-900 display-4">Método de la secante</h1>
+    </div>
+{% endblock %}
+    <div class="subtitle text-gray-700 display-6">
+        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la sintaxis de matlab para rellenar los campos. </div>
     <br>
+
     <form action="" method="POST">
         {% csrf_token %}
         <input type="text" name="func" class="form-control" placeholder="Función">
         <br>
-        <input type="number" name="xi" class="form-control" placeholder="a">
+        <input type="number" name="x0" class="form-control" placeholder="a">
         <br>
-        <input type="number" name="xs" class="form-control" placeholder="b">
+        <input type="number" name="x1" class="form-control" placeholder="b">
         <br>
-        <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
+        <input type="text" name="Tol" class="form-control" placeholder="Tolerancia">
         <br>
-        <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
+        <input type="number" name="niter" class="form-control" placeholder="Iteraciones">
         <br>
         <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
     </form>
-    {% if request.method == 'POST' %}
-
-    {% with func=request.POST.get('func'), xi=request.POST.get('xi'), xs=request.POST.get('xs'), tol=request.POST.get('tol'), iteraciones=request.POST.get('iteraciones') %}
-
-        {# Cargar la tabla CSV #}
-        {% with csv_file = open('tabsecante.csv') %}
-            {% with csv_reader = csv.reader(csv_file) %}
-                {% with csv_data = list(csv_reader) %}
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                {% for header in csv_data[0] %}
-                                    <th>{{ header }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in csv_data[1:] %}
-                                <tr>
-                                    {% for cell in row %}
-                                        <td>{{ cell }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% endwith %}
-            {% endwith %}
-        {% endwith %}
-
-        {# Cargar la imagen #}
-        {% with image_file = open('grafsecante.png', 'rb') %}
-            <img src="data:image/png;base64,{{ image_file.read().encode('base64') }}" alt="Imagen">
-        {% endwith %}
-
-    {% endwith %}
-
-{% endif %}
-        
+    {% if biseccion_model %}
+    <h2>Resultado</h2>
+    <br>
+    <img src="grafsecante.png" alt="Imagen">
     {% endif %}
 {% endblock %}
+
+    
+

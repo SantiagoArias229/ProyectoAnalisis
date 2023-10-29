@@ -2,8 +2,8 @@
 function [n,xn,fm, E] = secante(func,x0,x1,Tol,niter)
     syms x
 
-        %f= str2sym(func);
-        f =((exp(-x))*(-1+x))+(x^(2/3))-92;
+        f= str2sym(func);
+        %f =((exp(-x))*(-1+x))+(x^(2/3))-92;
         %f = log(sin(x)^2 + 1)-(1/2);
         %f=sin(2*x)-(x/(3))^3+0.1;
 

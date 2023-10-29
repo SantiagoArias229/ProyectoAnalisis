@@ -30,12 +30,11 @@ def secante(request):
         a = matlab.double(resultado)
         
         
-        secante_model = secanteModel(func = request.POST["func"], xi = request.POST["x0"], xs=request.POST["x1"], tol = request.POST["Tol"], iteraciones = request.POST["niter"])
+        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"])
        
-                    
-        
-       
-        
+        context = {
+            'secante_model': secante_model,
+        }        
         
         return render(request, "secante.html", context)
 
