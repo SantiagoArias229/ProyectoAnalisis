@@ -23,10 +23,11 @@ class BiseccionModel(models.Model):
 
 class secanteModel(models.Model):
     func = models.CharField(max_length=255)
-    xi = models.FloatField()
-    xs = models.FloatField()
-    tol =  models.FloatField()
-    iteraciones = models.IntegerField()
+    x0 = models.FloatField()
+    x1 = models.FloatField()
+    Tol =  models.FloatField()
+    niter = models.IntegerField()
+    error= models.IntegerField()
     
     def _str_(self):
         return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
