@@ -74,7 +74,7 @@ function [respuesta,T,E,fm] = Biseccion(func,xi,xs,Tol,niter)
         yline(0);
         plot(xplot,eval(subs(f,xplot)));
         img = getframe(gcf);
-        imwrite(img.cdata, 'grafica_biseccion.png');
+        imwrite(img.cdata, './media/grafica_biseccion.png');
         hold off
 
         if fe==0

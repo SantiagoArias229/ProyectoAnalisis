@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 from .models import *
 import matlab.engine
 import pandas as pd
@@ -64,11 +65,10 @@ def biseccion(request):
         context = {
         'biseccion_model': biseccion_model,
         'data': data,
+        'settings': settings,
         }
         
         biseccion_model.save()
-        
-        
         
         return render(request, "biseccion.html", context)
 
