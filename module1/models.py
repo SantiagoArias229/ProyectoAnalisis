@@ -3,13 +3,14 @@ from django.db import models
 
 class pfModel(models.Model):
     func = models.CharField(max_length=255)
-    xi = models.FloatField()
-    xs = models.FloatField()
-    tol =  models.FloatField()
-    iteraciones = models.IntegerField()
+    funcg = models.CharField(max_length=255)
+    x0 = models.FloatField()
+    Tol =  models.FloatField()
+    niter = models.IntegerField()
+    error= models.IntegerField()
     
     def _str_(self):
-        return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
+        return f"La función f{self.func} y la función g {self.funcg}: desde {self.x0} en {self.niter} iteraciones"
 
 class BiseccionModel(models.Model):
     func = models.CharField(max_length=255)
