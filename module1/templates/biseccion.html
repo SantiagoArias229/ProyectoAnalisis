@@ -1,50 +1,126 @@
 {% extends 'home.html' %}
-
-{% block title %}Biseccion{% endblock %}
-
 {% block content %}
-    <h1>Metodo de Biseccion</h1>
-    <br>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <input type="text" name="func" class="form-control" placeholder="Función">
-        <br>
-        <input type="number" name="xi" class="form-control" placeholder="a">
-        <br>
-        <input type="number" name="xs" class="form-control" placeholder="b">
-        <br>
-        <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
-        <br>
-        <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
-        <br>
-        <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
-    </form>
+{% block title %}
+<Biseccion>
+{% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% if biseccion_model %}
-        <h2>Resultado</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Iteration</th>
-                    <th>a</th>
-                    <th>xi</th>
-                    <th>b</th>
-                    <th>f(xi)</th>
-                    <th>Error</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in tabla %}
-                <tr>
-                    <td>{{ row.Iteration }}</td>
-                    <td>{{ row.a }}</td>
-                    <td>{{ row.xi }}</td>
-                    <td>{{ row.b }}</td>
-                    <td>{{ row.f }}</td>
-                    <td>{{ row.Error }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
+        
+        .title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe5b4;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+    <meta http-equiv="Expires" content="0">
+
+    <meta http-equiv="Last-Modified" content="0">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    
+    <meta http-equiv="Pragma" content="no-cache">
+</head>
+<body>
+    <div class="title-container">
+        <h1 class="title text-gray-900 display-4">Método de bisección</h1>
+    </div>
+
+    <div class="subtitle text-gray-700 display-6">
+        El método numérico de biseccion es ... </div>
+    <br>
+
+    <div class="container-fluid col-md-6">
+
+        <br>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="func" class="form-control" placeholder="Función">
+            <br>
+            <input type="number" name="xi" class="form-control" placeholder="a">
+            <br>
+            <input type="number" name="xs" class="form-control" placeholder="b">
+            <br>
+            <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
+            <br>
+            <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
+            <br>
+            <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+        </form>
+
+
+    </div>
+
+    <div class="container md-6">
+    
+        {% if biseccion_model %}
+            <h2>Resultado</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>a</th>
+                        <th>xi</th>
+                        <th>b</th>
+                        <th>f(xi)</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.Iteration }}</td>
+                        <td>{{ row.a }}</td>
+                        <td>{{ row.xi}}</td>
+                        <td>{{ row.b }}</td>
+                        <td>{{ row.fxi }}</td>
+                        <td>{{ row.Error }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <b>{{ biseccion_model }}</b>
+                    <br>
+                    <b>{{ biseccion_model.resultado }}</b>
+                </div>
+                <div class="col-md 6">
+                    <h5>Grafica de la funcion {{ biseccion_model.func }}</h5>
+                    <img src="/media/grafica_biseccion.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                </div>
+            </div>
+
+
+
+    </div>
+
     {% endif %}
 {% endblock %}
+</body>
+</html>
+
+
+

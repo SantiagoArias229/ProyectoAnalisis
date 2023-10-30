@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 from .models import *
 import matlab.engine
 import pandas as pd
@@ -51,7 +52,7 @@ def secante(request):
         
         
         secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"],error = request.POST["error"])
-       
+
         context = {
             'secante_model': secante_model,
         }        
@@ -71,26 +72,23 @@ def biseccion(request):
 
         eng = matlab.engine.start_matlab()
 
-        resultado = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]))
-        
-        a = matlab.double(resultado)
+        result = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]))
         
         
-        biseccion_model = BiseccionModel(func = request.POST["func"], xi = request.POST["xi"], xs=request.POST["xs"], tol = request.POST["tol"], iteraciones = request.POST["iteraciones"])
+        df = pd.read_csv('tables/tabla_biseccion.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
         
         
-        
-        tabla_dict = [{'Iteration': row[0], 'a': row[1], 'xi': row[2], 'b': row[3], 'f': row[4], 'Error': row[5]} for row in a]
-        
-        print(tabla_dict)
+        biseccion_model = BiseccionModel(func = request.POST["func"], xi = request.POST["xi"], xs=request.POST["xs"], tol = request.POST["tol"], iteraciones = request.POST["iteraciones"], resultado = result)
         
         context = {
-        'tabla': tabla_dict,
         'biseccion_model': biseccion_model,
+        'data': data,
+        'settings': settings,
         }
         
         biseccion_model.save()
-        
         
         return render(request, "biseccion.html", context)
 

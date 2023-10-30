@@ -1,6 +1,8 @@
 %Bisección: se ingresa el valor inicial y final del intervalo (xi, xs), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
-function [T,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
+
+function [respuesta,T,E,fm] = Biseccion(func,xi,xs,Tol,niter)
+
     syms x
     
     f = str2sym(func);
@@ -61,26 +63,33 @@ function [T,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
 
         end
 
-        tabla = table(Iteration', a', Xm', b', func', Error', 'VariableNames', {'Iteration', 'a', 'xi', 'b', 'f(xi)', 'Error'});
-        %disp(tabla)
+        tabla = table(Iteration', a', Xm', b', func', Error', 'VariableNames', {'Iteration', 'a', 'xi', 'b', 'fxi', 'Error'});
+        
+        csv_file_path = "tables/tabla_biseccion.csv";
 
-        Array = table2array(tabla)
+        writetable(tabla, csv_file_path)
 
-        T = Array
+        xplot=((xm-2):0.1:(xm+2));
+        hold on
+        yline(0);
+        plot(xplot,eval(subs(f,xplot)));
+        img = getframe(gcf);
+        imwrite(img.cdata, './media/grafica_biseccion.png');
+        hold off
 
         if fe==0
             s=xm;
-            fprintf('%f es raiz de f(x)',xm) 
+            respuesta = sprintf('%f es raiz de f(x)',xm) 
         elseif error<Tol
             s=xm;
-            fprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %f',xm,Tol)
+            respuesta = sprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %f',xm,Tol);
         else 
             s=xm;
-            fprintf('Fracasó en %f iteraciones',niter) 
+            respuesta = sprintf('Fracasó en %f iteraciones',niter) 
         end
     else
-        fprintf('El intervalo es inadecuado')         
+        respuesta = sprintf('El intervalo es inadecuado')         
     end 
 
-    
+
 end
