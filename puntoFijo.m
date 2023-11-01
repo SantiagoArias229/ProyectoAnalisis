@@ -1,6 +1,6 @@
-function [n,xn,fm,E] = puntoFijoFixed(x0,Tol,niter,func, funcg)
-    f=evalin(symengine,func);
-    g=evalin(symengine,funcg);
+function [n,xn,fm,E] = puntoFijo(func, funcg, x0,Tol,niter,error)
+    f=str2sym(func);
+    g=str2sym(funcg);
     c=0;
     fm(c+1) = eval(subs(f,x0));
     fe=fm(c+1);
@@ -12,8 +12,12 @@ function [n,xn,fm,E] = puntoFijoFixed(x0,Tol,niter,func, funcg)
         xn(c+2)=eval(subs(g,x0));
         fm(c+2)=eval(subs(f,xn(c+2)));
         fe=fm(c+2);
-        E(c+2)=abs((xn(c+2)-x0));
-        error=E(c+2);
+        if(error==1)
+            E(c+2)=abs((xn(c+2)-x0)/xn(c+2));
+            error=E(c+2);            
+        else 
+            E(c+2)=abs((xn(c+2)-x0));
+            error=E(c+2);
         x0=xn(c+2);
         N(c+2)=c+1;
         c=c+1;
@@ -36,4 +40,18 @@ function [n,xn,fm,E] = puntoFijoFixed(x0,Tol,niter,func, funcg)
        n=c;
        fprintf('Fracasó en %f iteraciones',niter) 
     end
+
+    tabla = table(N', xn', fm', E', 'VariableNames', {'Iteration','xi', 'fxi', 'Error'});
+        
+    csv_file_path = "tables/tabla_puntoFijo.csv";
+
+    writetable(tabla, csv_file_path)
+
+    xplot=((xm-2):0.1:(xm+2));
+    hold on
+    yline(0);
+    plot(xplot,eval(subs(f,xplot)));
+    img = getframe(gcf);
+    imwrite(img.cdata, './media/grafica_puntoFijo.png');
+    hold off
 end

@@ -33,7 +33,7 @@
     </div>
 {% endblock %}
     <div class="subtitle text-gray-700 display-6">
-        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la sintaxis de matlab para rellenar los campos. </div>
+        El método del punto fijo es un método iterativo que permite resolver sistemas de ecuaciones no necesariamente lineales. En particular se puede utilizar para determinar raíces de una función de la forma f(x), siempre y cuando se cumplan los criterios de convergencia. </div>
     <br>
 
     <form action="" method="POST">
@@ -52,10 +52,51 @@
         <br>
         <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
     </form>
-    {% if puntoFijo_model %}
-    <h2>Resultado</h2>
-    <br>
-    <img src="../../grafsecante.png" alt="Imagen">
+    <div class="container md-6">
+    
+        {% if puntoFijo_model %}
+            <h2>Resultado</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>a</th>
+                        <th>xi</th>
+                        <th>b</th>
+                        <th>f(xi)</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.Iteration }}</td>
+                        <td>{{ row.a }}</td>
+                        <td>{{ row.xi}}</td>
+                        <td>{{ row.b }}</td>
+                        <td>{{ row.fxi }}</td>
+                        <td>{{ row.Error }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <b>{{ puntoFijo_model }}</b>
+                    <br>
+                    <b>{{ puntoFijo_model.resultado }}</b>
+                </div>
+                <div class="col-md 6">
+                    <h5>Grafica de la funcion {{ puntoFijo_model.func }}</h5>
+                    <img src="/media/grafica_puntoFijo.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                </div>
+            </div>
+
+
+
+    </div>
+
     {% endif %}
 {% endblock %}
 

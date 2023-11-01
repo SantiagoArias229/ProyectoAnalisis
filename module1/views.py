@@ -17,15 +17,23 @@ def pf(request):
 
         eng = matlab.engine.start_matlab()
 
-        resultado = eng.puntoFijo(str(request.POST["func"]), str(request.POST["funcg"]), float(request.POST["x0"]),  float(request.POST["Tol"]), float(request.POST["niter"], float(request.POST["error"])))
+        result = eng.puntoFijo(str(request.POST["func"]), str(request.POST["funcg"]), float(request.POST["x0"]),  float(request.POST["Tol"]), float(request.POST["niter"]), float(request.POST["error"]))
         
-        a = matlab.double(resultado)        
+        df = pd.read_csv('tables/tabla_puntoFijo.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
         
-        puntoFijo_model = pfModel(func = request.POST["func"], funcg = request.POST["funcg"], x0 = request.POST["x0"], Tol = request.POST["Tol"], niter = request.POST["niter"], error = request.POST["error"])
-       
+        puntoFijo_model = pfModel(func = request.POST["func"], funcg = request.POST["funcg"], x0 = request.POST["x0"], Tol = request.POST["Tol"], niter = request.POST["niter"], error = request.POST["error"], resultado = result)
+        
         context = {
-            'puntoFijo_model': puntoFijo_model,
-        }        
+        'puntoFijo_model': puntoFijo_model,
+        'data': data,
+        'settings': settings,
+        }
+        
+        puntoFijo_model.save()
+
+        eng.quit()
         
         return render(request, "pf.html", context)
 
@@ -61,8 +69,6 @@ def secante(request):
 
     else:
         return render(request, "secante.html")
-
-
 
 def biseccion(request):
     if request.method == "POST":

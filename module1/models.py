@@ -8,6 +8,7 @@ class pfModel(models.Model):
     Tol =  models.FloatField()
     niter = models.IntegerField()
     error= models.IntegerField()
+    resultado = models.CharField(max_length=300, default=" ")
     
     def _str_(self):
         return f"La función f{self.func} y la función g {self.funcg}: desde {self.x0} en {self.niter} iteraciones"
