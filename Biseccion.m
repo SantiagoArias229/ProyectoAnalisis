@@ -1,9 +1,11 @@
 %Bisección: se ingresa el valor inicial y final del intervalo (xi, xs), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
 
-function [respuesta,T,E,fm] = Biseccion(func,xi,xs,Tol,niter)
+function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
 
     syms x
+
+    respuesta = "Error: No se encontró una raíz en el intervalo de la función"
     
     f = str2sym(func);
     %f(x)=log(sin(x)^2 + 1)-(1/2);
@@ -77,6 +79,8 @@ function [respuesta,T,E,fm] = Biseccion(func,xi,xs,Tol,niter)
         imwrite(img.cdata, './media/grafica_biseccion.png');
         hold off
 
+        
+
         if fe==0
             s=xm;
             respuesta = sprintf('%f es raiz de f(x)',xm) 
@@ -88,7 +92,7 @@ function [respuesta,T,E,fm] = Biseccion(func,xi,xs,Tol,niter)
             respuesta = sprintf('Fracasó en %f iteraciones',niter) 
         end
     else
-        respuesta = sprintf('El intervalo es inadecuado')         
+        respuesta = sprintf('Error: el intervalo es inadecuado, verifica que exista una raiz en el intervalo')         
     end 
 
 
