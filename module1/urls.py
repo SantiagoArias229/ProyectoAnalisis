@@ -8,4 +8,5 @@ urlpatterns = [
     path('rf/', views.rf, name='rf'),
     path('pf/', views.pf, name='pf'),
     path('newton1/', views.newton1, name='newton1'),
+    path('rm/', views.raices_multiples, name='rm'),
 ]

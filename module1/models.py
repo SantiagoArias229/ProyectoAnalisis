@@ -52,3 +52,14 @@ class rfModel(models.Model):
     
     def _str_(self):
         return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
+
+
+class rmModel(models.Model):
+    func = models.CharField(max_length=255)
+    x0 = models.FloatField()
+    tol =  models.FloatField()
+    iteraciones = models.IntegerField()
+    resultado = models.CharField(max_length=300, default=" ")
+    
+    def __str__(self):
+        return f"{self.func}: de {self.x0} en {self.iteraciones} iteraciones"

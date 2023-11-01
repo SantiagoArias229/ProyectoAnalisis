@@ -61,16 +61,40 @@ def biseccion(request):
         
         
         biseccion_model = BiseccionModel(func = request.POST["func"], xi = request.POST["xi"], xs=request.POST["xs"], tol = request.POST["tol"], iteraciones = request.POST["iteraciones"], resultado = result)
+        biseccion_model.save()
         
         context = {
         'biseccion_model': biseccion_model,
         'data': data,
         'settings': settings,
         }
-        
-        biseccion_model.save()
-        
+
         return render(request, "biseccion.html", context)
 
     else:
         return render(request, "biseccion.html")
+
+def raices_multiples(request):
+    if request.method == "POST":
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.raicesMultiples(float(request.POST["x0"]) , float(request.POST["tol"]), float(request.POST["iteraciones"]),str(request.POST["func"]))
+        
+        df = pd.read_csv('tables/tabla_raicesMultiples.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+        rm_model = rmModel(func = request.POST["func"], x0 = request.POST["x0"], tol = request.POST["tol"], iteraciones = request.POST["iteraciones"], resultado = result)
+        rm_model.save()
+        
+        context = {
+        'rm_model': rm_model,
+        'data': data,
+        'settings': settings,
+        }
+
+        return render(request, "rm.html", context)
+
+    else:
+        return render(request, "rm.html")
