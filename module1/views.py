@@ -10,7 +10,35 @@ def home(request):
     return render(request, "home.html")
 
 def pf(request):
-    return render(request, "pf.html")
+    if request.method == "POST":
+        # Ejecutar el código de MATLAB        
+        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
+        # Obtener la tabla de MATLAB
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.puntoFijo(str(request.POST["func"]), str(request.POST["funcg"]), float(request.POST["x0"]),  float(request.POST["Tol"]), float(request.POST["niter"]), float(request.POST["error"]))
+        
+        df = pd.read_csv('tables/tabla_puntoFijo.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+        puntoFijo_model = pfModel(func = request.POST["func"], funcg = request.POST["funcg"], x0 = request.POST["x0"], Tol = request.POST["Tol"], niter = request.POST["niter"], error = request.POST["error"], resultado = result)
+        
+        context = {
+        'puntoFijo_model': puntoFijo_model,
+        'data': data,
+        'settings': settings,
+        }
+        
+        puntoFijo_model.save()
+
+        eng.quit()
+        
+        return render(request, "pf.html", context)
+
+    else:
+        return render(request, "pf.html")
 
 def rf(request):
     return render(request, "rf.html")
@@ -45,8 +73,6 @@ def secante(request):
 
     else:
         return render(request, "secante.html")
-
-
 
 def biseccion(request):
     if request.method == "POST":
