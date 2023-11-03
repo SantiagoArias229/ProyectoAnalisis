@@ -28,10 +28,10 @@ class secanteModel(models.Model):
     x1 = models.FloatField()
     Tol =  models.FloatField()
     niter = models.IntegerField()
-    error= models.IntegerField(default=2)
+    resultado = models.CharField(max_length=300,default=" ")
     
-    def _str_(self):
-        return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
+    def __str__(self):
+        return f"{self.func}: {self.x0} a {self.x1} en {self.niter} iteraciones"
 
 class newton1Model(models.Model):
     func = models.CharField(max_length=255)
