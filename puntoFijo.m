@@ -47,7 +47,7 @@ function [n,xn,fm,E] = puntoFijo(func, funcg, x0,Tol,niter,error)
 
     writetable(tabla, csv_file_path)
 
-    xplot=((xm-2):0.1:(xm+2));
+    xplot=((x0-2):0.1:(x0+2));
     hold on
     yline(0);
     plot(xplot,eval(subs(f,xplot)));
