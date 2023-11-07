@@ -1,7 +1,7 @@
 
 function [n,xn,fm, E] = secante(func,x0,x1,Tol,niter)
     syms x
-
+      respuesta="Error: No se encontró una raíz en el intervalo de la función"
         f= str2sym(func);
         %f =((exp(-x))*(-1+x))+(x^(2/3))-92;
         %f = log(sin(x)^2 + 1)-(1/2);
@@ -74,17 +74,16 @@ function [n,xn,fm, E] = secante(func,x0,x1,Tol,niter)
         end
 
 
-        tabla = table(Iteration', Xn', Fxn', Error', 'VariableNames', {'Iteration', 'xn', 'f(xn)', 'E'});
-        disp(tabla)
-        matriz = table2array(tabla);
-        csvwrite('tabsecante.csv', matriz);
+        tabla = table(Iteration', Xn', Fxn', Error', 'VariableNames', {'Iteration', 'xn', 'fxn', 'E'});
+        csv_file_path = "tables/tabla_secante.csv";
+        writetable(tabla, csv_file_path)
 
         xplot=((xn-2):0.1:(xn+2));
         hold on
         yline(0);
         plot(xplot,eval(subs(f,xplot)));
         img = getframe(gcf);
-        imwrite(img.cdata, 'grafsecante.png');
+        imwrite(img.cdata, './media/grafica_secante.png');
         hold off
 
       
@@ -95,21 +94,21 @@ function [n,xn,fm, E] = secante(func,x0,x1,Tol,niter)
         if fn==0
            s=x0;
            n=c;
-           fprintf('%f es raiz de f(x) \n',xn)
+           respuesta = sprintf('%f es raiz de f(x) \n',xn)
 
         elseif error<Tol
            s=x0;
            n=c;
-           fprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %.10f \n',xn,Tol)
+          respuesta = sprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %.10f \n',xn,Tol)
 
         % elseif fn==0
         %    s=x0;
         %    n=c;
-        %    fprintf('%f es una posible raiz múltiple de f(x) \n',x0)
+        %    respuesta = sprintf('%f es una posible raiz múltiple de f(x) \n',x0)
         else 
            s=x0;
            n=c;
-           fprintf('Fracasó en %f iteraciones \n',niter) 
+          respuesta = sprintf('Fracasó en %f iteraciones \n',niter) 
         
         end
         
