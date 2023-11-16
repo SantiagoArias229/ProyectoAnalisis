@@ -65,3 +65,19 @@ class rmModel(models.Model):
     
     def __str__(self):
         return f"{self.func}: de {self.x0} en {self.iteraciones} iteraciones"
+
+
+#MODULE 2
+class sorModel(models.Model):
+    x0= models.TextField()
+    a=models.TextField()
+    b=models.TextField()
+    tol=models.FloatField()
+    niter=models.IntegerField()
+    w= models.FloatField()
+
+    def __str__(self) -> str:
+        return  f"{self.a}: con solución b {self.b} y condición inicial {self.x0} en {self.niter} iteraciones"
+
+
+#MODULE 3
