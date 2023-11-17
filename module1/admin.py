@@ -10,4 +10,5 @@ admin.site.register(rfModel)
 admin.site.register(rmModel)
 #MODULE 2
 admin.site.register(sorModel)
+admin.site.register(gsModel)
 #MODULE 3

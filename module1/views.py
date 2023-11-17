@@ -1,10 +1,23 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import *
 import matlab.engine
 import pandas as pd
+import json
 # Create your views here.
+
+def matriz_a_string(matriz):
+    filas = len(matriz)
+    columnas = len(matriz[0])
+    resultado = "["
+    for i in range(filas):
+        resultado += " ".join(map(str, matriz[i]))
+        if i < filas - 1:
+            resultado += "; "
+    resultado += "]"
+    return resultado
 
 def home(request):
     return render(request, "home.html")
@@ -159,3 +172,41 @@ def sor(request):
 
     else:
         return render(request, "pf.html")
+
+
+# Metodo para gauss-seidel
+@csrf_exempt
+def gs(request):
+    if request.method == 'POST':
+        matriz_a = json.loads(request.POST.get('matrizA'))
+        matriz_b = json.loads(request.POST.get('matrizB'))
+        matriz_x0 = json.loads(request.POST.get('matrizX0'))
+        
+        tol = request.POST.get('tol')
+        niter = request.POST.get('niter')
+        
+        gaussSeidel_model = gsModel(A=matriz_a, b=matriz_b, x0=matriz_x0,tol = tol, niter = niter)
+        gaussSeidel_model.save()
+        
+        eng = matlab.engine.start_matlab()
+        
+        matA = [[float(element) for element in sublist] for sublist in matriz_a]
+        matB = [[float(element) for element in sublist] for sublist in matriz_b]
+        matX0 = [[float(element) for element in sublist] for sublist in matriz_x0]
+        
+        A = matriz_a_string(matA)
+        b = matriz_a_string(matB)
+        x0 = matriz_a_string(matX0)
+        
+        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
+        
+        print(result)
+        
+        
+    
+        return redirect(request.path_info)
+    else:
+        return render(request, 'Module 2/gauss-seidel.html')
+    
+
+

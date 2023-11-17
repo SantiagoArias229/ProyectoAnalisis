@@ -9,9 +9,11 @@ urlpatterns = [
     path('pf/', views.pf, name='pf'),
     path('newton1/', views.newton1, name='newton1'),
     path('rm/', views.raices_multiples, name='rm'),
+    
     #MODULE 2
-     path('sor/', views.sor, name='sor'),
-   
+    path('sor/', views.sor, name='sor'),
+    path('gauss-seidel/', views.gs, name='gs'),
+    
     #MODULE 3
 
 ]

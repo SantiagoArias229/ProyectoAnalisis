@@ -79,5 +79,13 @@ class sorModel(models.Model):
     def __str__(self) -> str:
         return  f"{self.a}: con solución b {self.b} y condición inicial {self.x0} en {self.niter} iteraciones"
 
+class gsModel(models.Model):
+    A = models.JSONField()
+    b = models.JSONField(null=True, blank=True)
+    x0 = models.JSONField(null=True, blank=True)
+    tol = models.FloatField()
+    niter=models.IntegerField()
+
+
 
 #MODULE 3
