@@ -3,6 +3,7 @@ from . import views
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('index/', views.index, name='index'),
     path('secante/', views.secante, name='secante'),
     path('biseccion/', views.biseccion, name='biseccion'),
     path('rf/', views.rf, name='rf'),

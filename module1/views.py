@@ -22,6 +22,9 @@ def matriz_a_string(matriz):
 def home(request):
     return render(request, "home.html")
 
+def index(request):
+    return render(request, "index.html")
+
 def pf(request):
     if request.method == "POST":
         # Ejecutar el código de MATLAB        
