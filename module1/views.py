@@ -1,10 +1,23 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import *
 import matlab.engine
 import pandas as pd
+import json
 # Create your views here.
+
+def matriz_a_string(matriz):
+    filas = len(matriz)
+    columnas = len(matriz[0])
+    resultado = "["
+    for i in range(filas):
+        resultado += " ".join(map(str, matriz[i]))
+        if i < filas - 1:
+            resultado += "; "
+    resultado += "]"
+    return resultado
 
 def home(request):
     return render(request, "home.html")
@@ -54,15 +67,19 @@ def secante(request):
 
         eng = matlab.engine.start_matlab()
 
-        resultado = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"],float(request.POST["error"])))
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]))
         
-        a = matlab.double(resultado)
+        df = pd.read_csv('tables/tabla_secante.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
         
-        
-        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"],error = request.POST["error"])
 
+        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"],resultado=result)
+        secante_model.save()
         context = {
             'secante_model': secante_model,
+            'data': data,
+            'settings': settings,
         }        
         
         return render(request, "secante.html", context)
@@ -124,3 +141,72 @@ def raices_multiples(request):
 
     else:
         return render(request, "rm.html")
+    
+def sor(request):
+    if request.method == "POST":
+        # Ejecutar el código de MATLAB        
+        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
+        # Obtener la tabla de MATLAB
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.sor(str(request.POST["func"]), str(request.POST["funcg"]), float(request.POST["x0"]),  float(request.POST["Tol"]), float(request.POST["niter"]), float(request.POST["error"]))
+        
+        df = pd.read_csv('tables/tabla_puntoFijo.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+        puntoFijo_model = pfModel(func = request.POST["func"], funcg = request.POST["funcg"], x0 = request.POST["x0"], Tol = request.POST["Tol"], niter = request.POST["niter"], error = request.POST["error"], resultado = result)
+        
+        context = {
+        'puntoFijo_model': puntoFijo_model,
+        'data': data,
+        'settings': settings,
+        }
+        
+        puntoFijo_model.save()
+
+        eng.quit()
+        
+        return render(request, "pf.html", context)
+
+    else:
+        return render(request, "pf.html")
+
+
+# Metodo para gauss-seidel
+@csrf_exempt
+def gs(request):
+    if request.method == 'POST':
+        matriz_a = json.loads(request.POST.get('matrizA'))
+        matriz_b = json.loads(request.POST.get('matrizB'))
+        matriz_x0 = json.loads(request.POST.get('matrizX0'))
+        
+        tol = request.POST.get('tol')
+        niter = request.POST.get('niter')
+        
+        gaussSeidel_model = gsModel(A=matriz_a, b=matriz_b, x0=matriz_x0,tol = tol, niter = niter)
+        gaussSeidel_model.save()
+        
+        eng = matlab.engine.start_matlab()
+        
+        matA = [[float(element) for element in sublist] for sublist in matriz_a]
+        matB = [[float(element) for element in sublist] for sublist in matriz_b]
+        matX0 = [[float(element) for element in sublist] for sublist in matriz_x0]
+        
+        A = matriz_a_string(matA)
+        b = matriz_a_string(matB)
+        x0 = matriz_a_string(matX0)
+        
+        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
+        
+        print(result)
+        
+        
+    
+        return redirect(request.path_info)
+    else:
+        return render(request, 'Module 2/gauss-seidel.html')
+    
+
+

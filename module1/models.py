@@ -30,10 +30,10 @@ class secanteModel(models.Model):
     x1 = models.FloatField()
     Tol =  models.FloatField()
     niter = models.IntegerField()
-    error= models.IntegerField(default=2)
+    resultado = models.CharField(max_length=300,default=" ")
     
-    def _str_(self):
-        return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
+    def __str__(self):
+        return f"{self.func}: {self.x0} a {self.x1} en {self.niter} iteraciones"
 
 class newton1Model(models.Model):
     func = models.CharField(max_length=255)
@@ -65,3 +65,27 @@ class rmModel(models.Model):
     
     def __str__(self):
         return f"{self.func}: de {self.x0} en {self.iteraciones} iteraciones"
+
+
+#MODULE 2
+class sorModel(models.Model):
+    x0= models.TextField()
+    a=models.TextField()
+    b=models.TextField()
+    tol=models.FloatField()
+    niter=models.IntegerField()
+    w= models.FloatField()
+
+    def __str__(self) -> str:
+        return  f"{self.a}: con solución b {self.b} y condición inicial {self.x0} en {self.niter} iteraciones"
+
+class gsModel(models.Model):
+    A = models.JSONField()
+    b = models.JSONField(null=True, blank=True)
+    x0 = models.JSONField(null=True, blank=True)
+    tol = models.FloatField()
+    niter=models.IntegerField()
+
+
+
+#MODULE 3
