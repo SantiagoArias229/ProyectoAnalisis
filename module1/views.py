@@ -203,13 +203,19 @@ def gs(request):
         
         result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
         
-        print(result)
         
+        df = pd.read_csv('tables/tabla_gauss-seidel.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
         
-    
-        return redirect(request.path_info)
+        columnas = df.columns.tolist()
+        
+        return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)
+        
     else:
         return render(request, 'Module 2/gauss-seidel.html')
-    
 
+
+def newtonint(request):
+    return render(request, "Module 2/newtonint.html")
 
