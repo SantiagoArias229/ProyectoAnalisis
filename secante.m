@@ -70,6 +70,6 @@ function [respuesta,N,XN,fm, E] = secante(func,x0,x1,Tol,niter,Terror)
 
         hold off
         close(fig);
-        writetable(T,'data_secante.csv')
+        
         
 end

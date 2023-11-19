@@ -3,9 +3,9 @@
 %el tipo de tolerancia(Terror): 0 decimales correctos - 1 cifras 
 %el máximo número de iteraciones (niter) 
 
-function [respuesta,N,XN,fm, E] = ReglaFalsa(func,x0,x1,Tol,Terror,niter)
+function [respuesta] = ReglaFalsa(x0,x1,Tol,Terror,niter)
     syms x
-    f=evalin(symengine,fun);
+    f=(x)^5-(7*x)^3-1;
     c=0;
     xi(c+1)=x0;
     xs(c+1)=x1;
@@ -16,13 +16,13 @@ function [respuesta,N,XN,fm, E] = ReglaFalsa(func,x0,x1,Tol,Terror,niter)
         xm(c+1)=xi(c+1);
         fm(c+1)=eval(subs(f,xm(c+1)));
         E(c+1)=0;
-        fprintf('el límite inferior %f es raiz de f(x)',xi(c+1))
+        respuesta=sprintf('el límite inferior %f es raiz de f(x)',xi(c+1))
         T = table((0:1:c)', xm', xi', xs', fm', fi' , fs', E', VariableNames=["n","x_m","x_i","x_s","f_m","f_i","f_s","E"]);
     elseif fs(c+1)==0
         xm(c+1)=xs(c+1);
         fm(c+1)=eval(subs(f,xm(c+1)));
         E(c+1)=0;
-        fprintf('el límite superior %f es raiz de f(x)',xs(c+1))
+        respuesta=sprintf('el límite superior %f es raiz de f(x)',xs(c+1))
         T = table((0:1:c)', xm', xi', xs', fm', fi' , fs', E', VariableNames=["n","x_m","x_i","x_s","f_m","f_i","f_s","E"]);
     %certeza de raíz
     elseif fs(c+1)*fi(c+1)<0
@@ -64,14 +64,14 @@ function [respuesta,N,XN,fm, E] = ReglaFalsa(func,x0,x1,Tol,Terror,niter)
             c=c+1;
         end
         if fe==0 
-           fprintf('%f es raiz exacta de f(x), lograda en en %d iteraciones',xm(c+1),c)
+           respuesta=sprintf('%f es raiz exacta de f(x), lograda en en %d iteraciones',xm(c+1),c)
            E(c+2)=0
             T = table((0:1:c)', xm', xi', xs', fm', fi' , fs', E', VariableNames=["n","x_m","x_i","x_s","f_m","f_i","f_s","E"]);
         elseif error<Tol
-           fprintf('\n%f es una aproximación de una raiz de f(x) con una tolerancia= %f en %d iteraciones',xm(c+1),Tol,c)
+           respuesta=sprintf('\n%f es una aproximación de una raiz de f(x) con una tolerancia= %f en %d iteraciones',xm(c+1),Tol,c)
             T = table((0:1:c)', xm', xi', xs', fm', fi' , fs', E', VariableNames=["n","x_m","x_i","x_s","f_m","f_i","f_s","E"]);
         else
-           fprintf('Fracasó en %f iteraciones',niter)
+           respuesta=sprintf('Fracasó en %f iteraciones',niter)
 
            T = table(niter, VariableNames=["iteraciones"]);
         end
@@ -79,16 +79,18 @@ function [respuesta,N,XN,fm, E] = ReglaFalsa(func,x0,x1,Tol,Terror,niter)
         xm(c+1)=xi(c+1);
         fm(c+1)=fi(c+1);
         E(c+1)=100;
-        fprintf('El intervalo es inadecuado')         
+        respuesta=sprintf('El intervalo es inadecuado')         
         T = table(-1, VariableNames=["intervalo"]);
     end
-    writetable(T,'data_reglaFalsa.csv')
+    csv_file_path = "tables/tabla_rf.csv";
+        writetable(T, csv_file_path)
     fig = figure('Visible', 'off');
     xplot=((xm(c+1)-2):0.1:(xm(c+1)+2));
     hold on
     yline(0);
     plot(xplot,eval(subs(f,xplot)));
-    print(fig,'grafica_reglaFalsa','-dpng')
+   img = getframe(gcf);
+        imwrite(img.cdata, './media/grafica_rf.png');
     hold off
     close(fig);
 end
