@@ -30,10 +30,11 @@ class secanteModel(models.Model):
     x1 = models.FloatField()
     Tol =  models.FloatField()
     niter = models.IntegerField()
+    Terror= models.IntegerField()
     resultado = models.CharField(max_length=300,default=" ")
     
     def __str__(self):
-        return f"{self.func}: {self.x0} a {self.x1} en {self.niter} iteraciones"
+        return f"La función {self.func}: en el intervalo de {self.x0} a {self.x1} en {self.niter} iteraciones tiene como resultado:"
 
 class newton1Model(models.Model):
     func = models.CharField(max_length=255)

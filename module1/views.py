@@ -70,20 +70,21 @@ def secante(request):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]))
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
         
         df = pd.read_csv('tables/tabla_secante.csv')
         df = df.astype(str)
         data = df.to_dict(orient='records')
         
 
-        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"],resultado=result)
+        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
         secante_model.save()
         context = {
             'secante_model': secante_model,
             'data': data,
             'settings': settings,
         }        
+        eng.quit()
         
         return render(request, "secante.html", context)
 
