@@ -1,85 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducir Matriz</title>
-    <!-- Incluir Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        table {
-            border-collapse: collapse;
-            margin: 20px;
-        }
-
-        td, th {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-
-        input {
-            width: 40px;
-            text-align: center;
-        }
-    </style>
-    <!-- Incluir jQuery y Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</head>
-<body class="container mt-4">
-
-    <h2 class="text-center">Metodo Gauss-Seidel</h2>
-
-    <!-- Formulario para definir el tamaño de la matriz -->
-    <form id="tamanioForm" class="form-inline mb-3">
-        <div class="form-group mr-2">
-            <label for="filas" class="mr-2">Filas:</label>
-            <input type="number" id="filas" name="filas" min="1" class="form-control" required>
-        </div>
-        <div class="form-group mr-2">
-            <label for="columnas" class="mr-2">Columnas:</label>
-            <input type="number" id="columnas" name="columnas" min="1" class="form-control" required>
-        </div>
-        <button type="button" onclick="generarMatrizA();  generarMatrizb(); generarMatrizx0()" class="btn btn-primary">Generar Matriz</button>
-    </form>
-
-    <div class="row">
-        <div class="col-md-4">
-            <table id="matrizInput" class="table table-bordered">
-                <!-- La tabla se generará dinámicamente con JavaScript -->
-            </table>
-        </div>
-        <div class="col-md-4">
-
-            <table id="matrizInputB" class="table table-bordered">
-                <!-- La tabla se generará dinámicamente con JavaScript -->
-            </table>
-        </div>
-
-        <div class="col-md-4">
-            <table id="matrizInputx0" class="table table-bordered">
-                <!-- La tabla se generará dinámicamente con JavaScript -->
-            </table>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="tolerancia">Tolerancia:</label>
-            <input type="number" id="tolerancia" name="Tolerancia" class="form-control" placeholder="Tol">
-        </div>
-        <div class="form-group col-md-6">
-            <label for="iteraciones"># de Iteraciones:</label>
-            <input type="number" id="niter" name="Niter" class="form-control" placeholder="Niter">
-        </div>
-    </div>
-
-    <button onclick='guardarMatrices();' class='btn btn-success'>Ejecutar Metodo</button>
-
-
-
-    <script>
         function generarMatrizA() {
             var filas = parseInt(document.getElementById("filas").value);
             var columnas = parseInt(document.getElementById("columnas").value);
@@ -170,13 +88,32 @@ function guardarMatrices() {
             niter: niter,
         },
         headers: { "X-CSRFToken": csrftoken },
-        success: function(response) {
-            console.log("Matrices guardadas con éxito:", response);
+        success: function(data) {
+
+                $('#radio').text(data.radio);
+
+                // Llenar el encabezado de la tabla con las columnas
+                var encabezado = $('#encabezado');
+                $.each(data.columnas, function(index, columna) {
+                    encabezado.append('<th>' + columna + '</th>');
+                });
+
+                // Llenar la tabla con los datos recibidos
+                var tbody = $('#tablaDatos tbody');
+                $.each(data.datos, function(index, fila) {
+                    var tr = $('<tr>');
+                    $.each(data.columnas, function(index, columna) {
+                        tr.append('<td>' + fila[columna] + '</td>');
+                    });
+                    tbody.append(tr);
+                });
         },
         error: function(error) {
             console.error("Error al guardar las matrices:", error);
         }
     });
+
+    return false
 }
 
 function obtenerMatriz(tablaId) {
@@ -216,8 +153,3 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-    </script>
-
-</body>
-</html>

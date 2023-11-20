@@ -1,1 +1,131 @@
-rf
+{% extends 'home.html' %}
+{% block content %}
+{% block title %}
+<Regla Falsa>
+{% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
+        
+        .title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe5b4;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+</head>
+
+<body>
+    <div class="title-container">
+        <h1 class="title text-gray-900 display-4">Método de la regla falsa</h1>
+    </div>
+    <div class="subtitle text-gray-700 display-6">
+        El método de la regla falsa es un método iterativo que consiste en construir una recta que pasa por dos puntos del intervalo que contiene la raíz de la ecuación. La intersección de esta recta con el eje x es una aproximación a la raíz.Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos y se sugiere un maximo de 10o Iteraciones. </div>
+    <br>
+
+    <div class="container-fluid col-md-6">
+        <br>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="func" class="form-control" placeholder="Función">
+            <br>
+            <input type="number" name="x0" class="form-control" placeholder="a">
+            <br>
+            <input type="number" name="x1" class="form-control" placeholder="b">
+            <br>
+            <input type="text" name="Tol" class="form-control" placeholder="Tolerancia">
+            <br>
+            <input type="number" min:"0" max="100" name="niter" class="form-control" placeholder="Iteraciones">
+            <br>
+            <p class="subtitle text-gray-700 display-6">El tipo de error está dado por 0 para error absoluto y 1 para error relativo. Ingrese el que corresponda, al ingresar un valor invalido por defecto se tomará el error relativo.</p>
+            <input type="number" name="Terror" class="form-control" placeholder="Tipo de Error">
+            <br>
+            <div class="text-center">
+                <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+              </div>
+        </form>
+
+    </div>
+
+    <div class="container md-6">
+    {% if secante_model %}
+            <h2>Resultado</h2>
+            
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>xm</th>
+                        <th>xi</th>
+                        <th>xs</th>
+                        <th>fm</th>
+                        <th>fi</th>
+                        <th>fs</th>
+                        <th>E</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.n }}</td>
+                        <td>{{ row.x_m }}</td>
+                        <td>{{ row.x_i }}</td>
+                        <td>{{ row.x_s }}</td>
+                        <td>{{ row.f_m }}</td>
+                        <td>{{ row.f_i }}</td>
+                        <td>{{ row.f_s }}</td>
+                        <td>{{ row.E }}</td>
+                        x_m","x_i","x_s","f_m","f_i","f_s","E"
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %} 
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <b>{{ secante_model }}</b>
+                    <br>
+                    <b>{{ secante_model.resultado }}</b>
+                </div>
+                {% if "Fracasó" not in secante_model.resultado %}
+                <div class="col-md 6">
+                    <h5>Grafica de la funcion {{ secante_model.func }}</h5>
+                    <img src="/media/grafica_secante.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                </div>
+            </div>
+
+
+
+    </div>
+
+    {% endif %}
+{% endblock %}
+</body>
+</html>
+    
+

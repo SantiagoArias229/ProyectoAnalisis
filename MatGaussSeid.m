@@ -3,7 +3,7 @@
 %de Gauss Seidel (Matricial), depende del método elegido, se elige 0 o 1 en met
 %respectivamente
 
-function [E,s] = MatGaussSeid(x0,A,b,Tol,niter)
+function [radio,E,s] = MatGaussSeid(x0,A,b,Tol,niter)
 
     A = str2num(A);
     b = str2num(b);
@@ -31,8 +31,8 @@ function [E,s] = MatGaussSeid(x0,A,b,Tol,niter)
             C=inv(D-L)*b;
             x1=T*x0+C;
         end
-        E(c+1)=norm((x1-x0)/x1,'inf');
-        error=E(c+1);
+        E(c+2)=norm((x1-x0)/x1,'inf');
+        error=E(c+2);
         x0=x1
         c=c+1;
 
@@ -40,8 +40,15 @@ function [E,s] = MatGaussSeid(x0,A,b,Tol,niter)
         Xt(:,c+1)=x0;
     end
 
-    %D=[n' Xt' E'];
-    %table(D);
+    % Calcula el radio espectral
+    radio = max(abs(eig(T)));
+
+    D=[n' Xt' E'];
+    tabla = table(n', Xt', E', 'VariableNames', {'Iteracion', 'x' 'Error'});
+
+    csv_file_path = "tables/tabla_gauss-seidel.csv";
+
+    writetable(tabla, csv_file_path)
 
     if error < Tol
         s=x0;

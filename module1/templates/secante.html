@@ -44,7 +44,7 @@
         <h1 class="title text-gray-900 display-4">Método de la secante</h1>
     </div>
     <div class="subtitle text-gray-700 display-6">
-        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la sintaxis de matlab para rellenar los campos. </div>
+        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos. </div>
     <br>
 
     <div class="container-fluid col-md-6">
@@ -61,7 +61,12 @@
             <br>
             <input type="number" name="niter" class="form-control" placeholder="Iteraciones">
             <br>
-            <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+            <p class="subtitle text-gray-700 display-6">El tipo de error está dado por 0 para error absoluto y 1 para error relativo. Ingrese el que corresponda, al ingresar un valor invalido por defecto se tomará el error relativo.</p>
+            <input type="number" name="Terror" class="form-control" placeholder="Tipo de Error">
+            <br>
+            <div class="text-center">
+                <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+              </div>
         </form>
 
     </div>
@@ -90,7 +95,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            
+            {% endif %} 
 
             <div class="row mt-4">
                 <div class="col-md-6">
@@ -98,7 +103,7 @@
                     <br>
                     <b>{{ secante_model.resultado }}</b>
                 </div>
-                
+                {% if "Fracasó" not in secante_model.resultado %}
                 <div class="col-md 6">
                     <h5>Grafica de la funcion {{ secante_model.func }}</h5>
                     <img src="/media/grafica_secante.png" class="img-thumbnail rounded float-end" alt="Imagen">

@@ -14,8 +14,10 @@ urlpatterns = [
     #MODULE 2
     path('sor/', views.sor, name='sor'),
     path('gauss-seidel/', views.gs, name='gs'),
+    path('newton-interpolante/', views.newtonint, name="newtonint"),
     
     #MODULE 3
+    path('lagrangem/', views.lagrangem, name='lagrangem'),
     path('lineal/', views.lineal, name='lineal'),
     path('cubico/', views.cubico, name='cubico'),
 ]

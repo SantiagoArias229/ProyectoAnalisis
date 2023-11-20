@@ -1,0 +1,169 @@
+{% extends 'home.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducir Matriz</title>
+    <!-- Incluir Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+        }
+
+        td, th {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        input {
+            width: 40px;
+            text-align: center;
+        }
+        .error_text{
+            font-size: 15px;
+        }
+    </style>
+    <!-- Incluir jQuery y Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body class="container mt-6">
+
+    <h2 class="text-center">Metodo de interpolación de lagrange</h2>
+
+    <!-- Formulario para definir el tamaño de la matriz -->
+    <form id="tamanioForm" class="form-inline mb-3">
+        <div class="form-group mr-2">
+            <label for="filas" class="mr-2">Cantidad de datos:</label>
+            <input type="number" id="cantidadDatos" name="cantidadDatos" min="1" class="form-control" required>
+        </div>
+        <button type="button" onclick="generarVectorx();  generarVectory();" class="btn btn-primary">Generar</button>
+    </form>
+
+    <div class="row">
+        <div class="col-md-4">
+            <table id="vectorx" class="table table-bordered">
+                <h6>X</h6>
+                <!-- La tabla se generará dinámicamente con JavaScript -->
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table id="vectory" class="table table-bordered">
+                <h6>Y</h6>
+                <!-- La tabla se generará dinámicamente con JavaScript -->
+            </table>
+        </div>
+    </div>
+
+    <button onclick='guardarMatrices();' class='btn btn-success'>Ejecutar Metodo</button>
+
+
+
+    <script>
+        function generarVectorx() {
+            var filas = parseInt(document.getElementById("cantidadDatos").value);
+            var tabla = document.getElementById("vectorx");
+
+            // Limpiar la tabla
+            tabla.innerHTML = '';            
+            var fila = tabla.insertRow(0);  
+            for (var j = 0; j < filas; j++) {
+                var celda = fila.insertCell(j);
+                var input = document.createElement("input");
+                input.type = "number";
+                input.name = "dato[" + j + "]";
+                celda.appendChild(input);
+            }
+            
+        }
+
+        function generarVectory() {
+            var filas = parseInt(document.getElementById("cantidadDatos").value);
+            var tabla = document.getElementById("vectory");
+
+            // Limpiar la tabla
+            tabla.innerHTML = '';            
+            var fila = tabla.insertRow(0);  
+            for (var j = 0; j < filas; j++) {
+                var celda = fila.insertCell(j);
+                var input = document.createElement("input");
+                input.type = "number";
+                input.name = "dato[" + j + "]";
+                celda.appendChild(input);
+            }
+        }
+
+      
+// ...
+
+function guardarMatrices() {
+    console.log("Hola desde ")
+    var vx = obtenerVector('vectorx');
+    var vy = obtenerVector('vectory');
+
+    // Obtener el token CSRF de la cookie
+    var csrftoken = getCookie('csrftoken');
+
+    // Enviar ambas matrices al servidor usando AJAX (jQuery) con el token CSRF
+    $.ajax({
+        url: "/module1/lagrangem/",  // Ajusta la URL según tu configuración
+        type: "POST",
+        data: {
+            vectorx: JSON.stringify(vx),
+            vectory: JSON.stringify(vy),
+        },
+        headers: { "X-CSRFToken": csrftoken },
+        success: function(response) {
+            console.log("Matrices guardadas con éxito:", response);
+        },
+        error: function(error) {
+            console.error("Error al guardar las matrices:", error);
+        }
+    });
+}
+
+function obtenerVector(tablaId) {
+    var matriz = [];
+    console.log("Hola desde obtener vector")
+    console.log(document.getElementById(tablaId))
+    var cells = document.getElementById(tablaId).cells.length;   
+
+    for (var j = 0; j < cells; j++) {
+        var valor = cells[j].getElementsByTagName("input")[0].value;
+        vector.push(valor);
+    }
+
+        vectorfinal.push(vector);
+    
+
+    return vectorfinal;
+}
+
+
+
+// Función para obtener el valor del token CSRF de la cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+    </script>
+
+</body>
+</html>
+{%  endblock %}

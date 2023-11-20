@@ -1,5 +1,5 @@
-function [respuesta,N,XN,fm, E] = secante(func,x0,x1,Tol,niter,Terror)
-        syms x
+function [respuesta] = secante(func,x0,x1,Tol,niter,Terror)
+
         f=str2sym(func);
         c=0;
  
@@ -45,18 +45,18 @@ function [respuesta,N,XN,fm, E] = secante(func,x0,x1,Tol,niter,Terror)
         end
 
         if fe==0
-           respuesta=sprintf('%f es raiz de f(x) \n',xn)
+           fprintf('%f es raiz de f(x) \n',xn)
            E(c+3)=0
 
         elseif error<Tol
-           respuesta=sprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %f \n',xn,Tol)
+           respuesta=sprintf('%f es una aproximación de una raiz de f(x) con una tolerancia= %f \n')
 
         else 
-           respuesta=sprintf('Fracasó en %f iteraciones \n',niter)
+           fprintf('Fracasó en %f iteraciones \n',niter)
 
         end
 
-        T = table(N', XN', fm', E', 'VariableNames', {' ', 'xn', 'fxn', 'E'});
+        T = table(N', XN', fm', E', 'VariableNames', {'Iteration', 'xn', 'fxn', 'E'});
         csv_file_path = "tables/tabla_secante.csv";
         writetable(T, csv_file_path)
 
@@ -70,6 +70,6 @@ function [respuesta,N,XN,fm, E] = secante(func,x0,x1,Tol,niter,Terror)
 
         hold off
         close(fig);
-        
+        writetable(T,'data_secante.csv')
         
 end

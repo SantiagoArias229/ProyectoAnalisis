@@ -34,7 +34,7 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/modulo1">Jacobi</a></li>
               <li><a class="dropdown-item" href="{% url 'gs' %}">Gauss-Seidel</a></li>
-              <li><a class="dropdown-item" href="/modulo3">SOR</a></li>
+              <li><a class="dropdown-item" href="{% url 'sor' %}">SOR</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown d-inline-block">
@@ -43,10 +43,10 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/modulo1">Vandermonde</a></li>
-              <li><a class="dropdown-item" href="/modulo2">Newton</a></li>
-              <li><a class="dropdown-item" href="/modulo3">Lagrange</a></li>
-              <li><a class="dropdown-item" href="{% url 'lineal' %}">Spline Lineal</a></li>
-              <li><a class="dropdown-item" href="{% url 'cubico' %}">Spline Cubico</a></li>
+              <li><a class="dropdown-item" href="{% url 'newtonint' %}">Newton</a></li>
+              <li><a class="dropdown-item" href="{% url 'lagrangem' %}">Lagrange</a></li>
+              <li><a class="dropdown-item" href="{% url 'lineal' %}">Lineal</a></li>
+              <li><a class="dropdown-item" href="{% url 'cubico' %}">Cubico</a></li>
             </ul>
           </li>
         </ul>
