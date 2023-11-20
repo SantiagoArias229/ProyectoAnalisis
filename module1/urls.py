@@ -16,5 +16,5 @@ urlpatterns = [
     path('gauss-seidel/', views.gs, name='gs'),
     
     #MODULE 3
-
+     path('lagrangem/', views.lagrangem, name='lagrangem'),
 ]
