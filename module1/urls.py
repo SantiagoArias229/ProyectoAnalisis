@@ -16,5 +16,6 @@ urlpatterns = [
     path('gauss-seidel/', views.gs, name='gs'),
     
     #MODULE 3
-
+    path('lineal/', views.lineal, name='lineal'),
+    path('cubico/', views.cubico, name='cubico'),
 ]
