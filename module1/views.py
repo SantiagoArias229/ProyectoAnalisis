@@ -65,33 +65,53 @@ def pf(request):
         return render(request, "pf.html")
 
 def rf(request):
-    return render(request, "rf.html")
+   if request.method == "POST":
+       
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        
+        df = pd.read_csv('tables/tabla_rf.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+
+        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+        rf_model.save()
+        context = {
+            'rf_model': rf_model,
+            'data': data,
+            'settings': settings,
+        }        
+        eng.quit()
+        
+        return render(request, "rf.html", context)
 
 def newton1(request):
     return render(request, "newton1.html")
 
 def secante(request):
     if request.method == "POST":
-        # Ejecutar el código de MATLAB        
-        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
-        # Obtener la tabla de MATLAB
+       
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]))
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
         
         df = pd.read_csv('tables/tabla_secante.csv')
         df = df.astype(str)
         data = df.to_dict(orient='records')
         
 
-        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"],resultado=result)
+        secante_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
         secante_model.save()
         context = {
             'secante_model': secante_model,
             'data': data,
             'settings': settings,
         }        
+        eng.quit()
         
         return render(request, "secante.html", context)
 
@@ -227,14 +247,17 @@ def gs(request):
         
         result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
         
-        print(result)
         
+        df = pd.read_csv('tables/tabla_gauss-seidel.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
         
-    
-        return redirect(request.path_info)
+        columnas = df.columns.tolist()
+        
+        return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)
+        
     else:
         return render(request, 'Module 2/gauss-seidel.html')
-    
 
 
 @csrf_exempt
@@ -264,3 +287,7 @@ def lagrangem(request):
         return redirect(request.path_info)
     else:
         return render(request, 'Module3/lagrange.html')
+    
+def newtonint(request):
+    return render(request, "Module 2/newtonint.html")
+
