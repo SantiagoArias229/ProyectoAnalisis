@@ -65,28 +65,27 @@ def pf(request):
         return render(request, "pf.html")
 
 def rf(request):
-   if request.method == "POST":
-       
+    if request.method == "POST":
+            eng = matlab.engine.start_matlab()
 
-        eng = matlab.engine.start_matlab()
+            result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+            
+            df = pd.read_csv('tables/tabla_rf.csv')
+            df = df.astype(str)
+            data = df.to_dict(orient='records')
+            
 
-        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
-        
-        df = pd.read_csv('tables/tabla_rf.csv')
-        df = df.astype(str)
-        data = df.to_dict(orient='records')
-        
-
-        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
-        rf_model.save()
-        context = {
-            'rf_model': rf_model,
-            'data': data,
-            'settings': settings,
-        }        
-        eng.quit()
-        
-        return render(request, "rf.html", context)
+            rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+            rf_model.save()
+            context = {
+                'rf_model': rf_model,
+                'data': data,
+                'settings': settings,
+            }        
+            eng.quit()
+            return render(request, "rf.html", context)
+    else:
+        return render(request, "rf.html")
 
 def newton1(request):
     return render(request, "newton1.html")
