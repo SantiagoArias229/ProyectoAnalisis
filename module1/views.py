@@ -57,16 +57,35 @@ def pf(request):
         return render(request, "pf.html")
 
 def rf(request):
-    return render(request, "rf.html")
+   if request.method == "POST":
+       
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        
+        df = pd.read_csv('tables/tabla_rf.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+
+        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+        rf_model.save()
+        context = {
+            'rf_model': rf_model,
+            'data': data,
+            'settings': settings,
+        }        
+        eng.quit()
+        
+        return render(request, "rf.html", context)
 
 def newton1(request):
     return render(request, "newton1.html")
 
 def secante(request):
     if request.method == "POST":
-        # Ejecutar el código de MATLAB        
-        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
-        # Obtener la tabla de MATLAB
+       
 
         eng = matlab.engine.start_matlab()
 

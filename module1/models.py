@@ -48,13 +48,15 @@ class newton1Model(models.Model):
 
 class rfModel(models.Model):
     func = models.CharField(max_length=255)
-    xi = models.FloatField()
-    xs = models.FloatField()
-    tol =  models.FloatField()
-    iteraciones = models.IntegerField()
+    x0 = models.FloatField()
+    x1 = models.FloatField()
+    Tol =  models.FloatField()
+    niter = models.IntegerField()
+    Terror= models.IntegerField()
+    resultado = models.CharField(max_length=300,default=" ")
     
-    def _str_(self):
-        return f"{self.func}: {self.xi} a {self.xs} en {self.iteraciones} iteraciones"
+    def __str__(self):
+        return f"La función {self.func}: en el intervalo de {self.x0} a {self.x1} en {self.niter} iteraciones tiene como resultado:"
 
 
 class rmModel(models.Model):

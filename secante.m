@@ -56,7 +56,7 @@ function [respuesta,N,XN,fm, E] = secante(func,x0,x1,Tol,niter,Terror)
 
         end
 
-        T = table(N', XN', fm', E', 'VariableNames', {'Iteration', 'xn', 'fxn', 'E'});
+        T = table(N', XN', fm', E', 'VariableNames', {' ', 'xn', 'fxn', 'E'});
         csv_file_path = "tables/tabla_secante.csv";
         writetable(T, csv_file_path)
 
