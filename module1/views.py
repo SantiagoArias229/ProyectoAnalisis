@@ -6,6 +6,10 @@ from .models import *
 import matlab.engine
 import pandas as pd
 import json
+
+from proyecto_analisis.settings import BASE_DIR
+import os
+
 # Create your views here.
 
 def matriz_a_string(matriz):
@@ -257,8 +261,6 @@ def gs(request):
         
     else:
         return render(request, 'Module 2/gauss-seidel.html')
-
-
 @csrf_exempt
 def lagrangem(request):
     if request.method == 'POST':
@@ -290,3 +292,107 @@ def lagrangem(request):
 def newtonint(request):
     return render(request, "Module 2/newtonint.html")
 
+
+@csrf_exempt   
+def lineal(request):
+    if(request.method=='POST'):
+        
+        eng = matlab.engine.start_matlab()
+        
+        x=request.POST.get('x')
+        x=x.replace(' ','')
+        
+        xFile=open("puntosX.txt",'w')
+        xFile.write(x)
+        xFile.close()
+        
+        y=request.POST.get('y')
+        y=y.replace(' ','')
+        print(x)
+        print(y)
+        
+        yFile=open("puntosY.txt",'w')
+        yFile.write(y)
+        yFile.close()
+
+        #corremos matlab
+        eng.Spline(1)
+        
+        try:
+            csv_file = open('Spline_Lineal.csv', 'r')
+            data = csv_file.readlines()
+            columnNames = data[0].split(',')
+            columnNames[len(columnNames)-1] = columnNames[len(columnNames)-1].replace('\n','')
+            table = []
+            for i in range(1, len(data)):
+                row = data[i].split(',')
+                row[len(row)-1] = row[len(row)-1].replace('\n','')
+                table.append(row)
+                csv_file.close()
+        except PermissionError as e:
+            print(f"Error de permisos: {e}")
+
+        Data('grafica_lineal.png', 'Spline_Lineal.csv')    
+        
+        return render(request, 'lineal.html',context={'graph':True,'tabla':table,'title':columnNames})
+    
+    return render(request, "lineal.html", context={})
+
+@csrf_exempt   
+def cubico(request):
+    if(request.method=='POST'):
+        
+        eng = matlab.engine.start_matlab()
+        
+        x=request.POST.get('x')
+        x=x.replace(' ','')
+        
+        xFile=open("puntosX.txt",'w')
+        xFile.write(x)
+        xFile.close()
+        
+        y=request.POST.get('y')
+        y=y.replace(' ','')
+        print(x)
+        print(y)
+       
+        yFile=open("puntosY.txt",'w')
+        yFile.write(y)
+        yFile.close()
+
+        eng.Spline(3)
+        
+        try:
+            csv_file = open('Spline_Lineal.csv', 'r')
+            data = csv_file.readlines()
+            columnNames = data[0].split(',')
+            columnNames[len(columnNames)-1] = columnNames[len(columnNames)-1].replace('\n','')
+            table = []
+            for i in range(1, len(data)):
+                row = data[i].split(',')
+                row[len(row)-1] = row[len(row)-1].replace('\n','')
+                table.append(row)
+                csv_file.close()
+        except PermissionError as e:
+            print(f"Error de permisos: {e}")
+
+        Data('grafica_lineal.png', 'Spline_Lineal.csv')    
+        
+        return render(request, 'cubico.html',context={'graph':True,'tabla':table,'title':columnNames})
+    
+    return render(request, "cubico.html", context={})
+
+def Data(image_name, csv_name):
+    
+    file_path = os.path.join(BASE_DIR, image_name)
+    destination_path = os.path.join(BASE_DIR, 'module1', 'static', 'images', image_name)
+    if(os.path.isfile(destination_path)):
+        os.remove(destination_path)
+    os.rename(file_path, destination_path)
+    
+    
+    file_path = os.path.join(BASE_DIR, csv_name)
+    destination_path = os.path.join(BASE_DIR, 'module1', 'static', 'csv', csv_name)
+    if(os.path.isfile(destination_path)):
+        os.remove(destination_path)
+    os.rename(file_path, destination_path)
