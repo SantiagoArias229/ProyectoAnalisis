@@ -19,6 +19,14 @@ def matriz_a_string(matriz):
     resultado += "]"
     return resultado
 
+def vector_a_string(vector):
+    columnas = len(vector)
+    resultado = "["
+    for i in range(columnas):
+        resultado += " ".join(map(str, vector[i]))
+    resultado += "]"
+    return resultado
+
 def home(request):
     return render(request, "home.html")
 
@@ -164,37 +172,53 @@ def raices_multiples(request):
 
     else:
         return render(request, "rm.html")
-    
+
+@csrf_exempt
 def sor(request):
-    if request.method == "POST":
-        # Ejecutar el código de MATLAB        
-        # x = eng.FalsaPosicion(float(xi), float(xs), float(Tol), float(niter))
-        # Obtener la tabla de MATLAB
-
-        eng = matlab.engine.start_matlab()
-
-        result = eng.sor(str(request.POST["func"]), str(request.POST["funcg"]), float(request.POST["x0"]),  float(request.POST["Tol"]), float(request.POST["niter"]), float(request.POST["error"]))
+    if request.method == 'POST':
+        matriz_a = json.loads(request.POST.get('matrizA'))
+        matriz_b = json.loads(request.POST.get('matrizB'))
+        matriz_x0 = json.loads(request.POST.get('matrizX0'))
         
-        df = pd.read_csv('tables/tabla_puntoFijo.csv')
+        tol = request.POST.get('tol')
+        niter = request.POST.get('niter')
+        w = request.POST.get('w')
+        error = request.POST.get('error')
+        
+        sor_model = sorModel(A=matriz_a, b=matriz_b, x0=matriz_x0,tol = tol, niter = niter, w=w, error=error)      
+        
+        eng = matlab.engine.start_matlab()
+        
+        matA = [[float(element) for element in sublist] for sublist in matriz_a]
+        matB = [[float(element) for element in sublist] for sublist in matriz_b]
+        matX0 = [[float(element) for element in sublist] for sublist in matriz_x0]
+        
+        A = matriz_a_string(matA)
+        b = matriz_a_string(matB)
+        x0 = matriz_a_string(matX0)
+        
+        result = eng.sor(x0, A, b, float(tol), float(niter), float(w), error)
+
+        df = pd.read_csv('tables/tabla_sor.csv')
         df = df.astype(str)
         data = df.to_dict(orient='records')
-        
-        puntoFijo_model = pfModel(func = request.POST["func"], funcg = request.POST["funcg"], x0 = request.POST["x0"], Tol = request.POST["Tol"], niter = request.POST["niter"], error = request.POST["error"], resultado = result)
+
+        print(data)
         
         context = {
-        'puntoFijo_model': puntoFijo_model,
-        'data': data,
-        'settings': settings,
+            'data': data,
+            'sor_model': sor_model,
+            'settings': settings,
         }
-        
-        puntoFijo_model.save()
 
-        eng.quit()
-        
-        return render(request, "pf.html", context)
+        sor_model.save()
+        print(result)  
 
+        eng.quit()    
+        
+        return render(request, 'Module2/sor.html', context)
     else:
-        return render(request, "pf.html")
+        return render(request, 'Module2/sor.html')
 
 
 # Metodo para gauss-seidel
@@ -236,6 +260,34 @@ def gs(request):
         return render(request, 'Module 2/gauss-seidel.html')
 
 
+@csrf_exempt
+def lagrangem(request):
+    if request.method == 'POST':
+        x = json.loads(request.POST.get('vectorx'))
+        y = json.loads(request.POST.get('vectory'))        
+        
+        lagrange_model = lagrange(x=x, y=y)
+        lagrange_model.save()
+        
+        eng = matlab.engine.start_matlab()
+        
+        matx = [[float(element) for element in sublist] for sublist in x]
+        maty = [[float(element) for element in sublist] for sublist in y]
+        
+        vx = vector_a_string(matx)
+        vy = vector_a_string(maty)
+        
+        result = eng.Lagrange(vx, vy)
+
+        # csv_file = open('data_iterativos.csv', 'r')
+        # data = csv_file.readlines()
+        
+        print(result)                        
+        
+        return redirect(request.path_info)
+    else:
+        return render(request, 'Module3/lagrange.html')
+    
 def newtonint(request):
     return render(request, "Module 2/newtonint.html")
 

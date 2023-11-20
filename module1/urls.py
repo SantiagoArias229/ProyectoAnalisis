@@ -17,5 +17,5 @@ urlpatterns = [
     path('newton-interpolante/', views.newtonint, name="newtonint"),
     
     #MODULE 3
-
+     path('lagrangem/', views.lagrangem, name='lagrangem'),
 ]

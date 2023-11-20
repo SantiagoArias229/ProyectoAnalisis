@@ -32,6 +32,7 @@ class secanteModel(models.Model):
     niter = models.IntegerField()
     Terror= models.IntegerField()
     resultado = models.CharField(max_length=300,default=" ")
+
     
     def __str__(self):
         return f"La función {self.func}: en el intervalo de {self.x0} a {self.x1} en {self.niter} iteraciones tiene como resultado:"
@@ -72,15 +73,13 @@ class rmModel(models.Model):
 
 #MODULE 2
 class sorModel(models.Model):
-    x0= models.TextField()
-    a=models.TextField()
-    b=models.TextField()
-    tol=models.FloatField()
+    A = models.JSONField()
+    b = models.JSONField(null=True, blank=True)
+    x0 = models.JSONField(null=True, blank=True)
+    tol = models.FloatField()
     niter=models.IntegerField()
-    w= models.FloatField()
-
-    def __str__(self) -> str:
-        return  f"{self.a}: con solución b {self.b} y condición inicial {self.x0} en {self.niter} iteraciones"
+    w= models.FloatField( null=False, default=1)
+    error= models.IntegerField( null=False, blank=True)
 
 class gsModel(models.Model):
     A = models.JSONField()
@@ -89,6 +88,8 @@ class gsModel(models.Model):
     tol = models.FloatField()
     niter=models.IntegerField()
 
-
-
 #MODULE 3
+class lagrange(models.Model):
+    x = models.JSONField()
+    y = models.JSONField()
+

@@ -1,26 +1,31 @@
-//SOR: Calcula la solución del sistema
-//Ax=b con base en una condición inicial x0,mediante el método Gauss Seidel (relajado), depende del valor de w 
-//entre (0,2)
-
-function [E,s] = SOR(x0,A,b,Tol,niter,w)
+function [E,s] = SOR(x0,A,b,Tol,niter,w, error)
+    
+    A = str2num(A);
+    b = str2num(b);
+    x0 = str2num(x0);
     c=0;
     error=Tol+1;
     D=diag(diag(A));
     L=-tril(A,-1);
     U=-triu(A,+1);
     while error>Tol && c<niter
-
         T=inv(D-w*L)*((1-w)*D+w*U);
         C=w*inv(D-w*L)*b;
         x1=T*x0+C;
-        E(c+1)=norm((x1-x0)./x1,'inf');
+        if error ==1
+            E(c+1)=norm((x1-x0)./x1,'inf');
+        else
+            E(c+1)=norm((x1-x0),'inf');
+        end
         error=E(c+1);
         x0=x1;
         c=c+1;
-    end
+       
+    end 
+      
     if error < Tol
         s=x0;
-       n=c;
+        n=c;
         s
         fprintf('es una aproximación de la solución del sistmea con una tolerancia= %f',Tol)
     else 
@@ -28,4 +33,10 @@ function [E,s] = SOR(x0,A,b,Tol,niter,w)
         n=c;
         fprintf('Fracasó en %f iteraciones',niter) 
     end
+
+    tabla = table(s, 'VariableNames', {'solucion'});
+        
+    csv_file_path = "tables/tabla_sor.csv";
+
+    writetable(tabla, csv_file_path)
 end
