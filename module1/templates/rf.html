@@ -53,9 +53,9 @@
             {% csrf_token %}
             <input type="text" name="func" class="form-control" placeholder="Función">
             <br>
-            <input type="number" name="x0" class="form-control" placeholder="a">
+            <input type="float" name="x0" class="form-control" placeholder="a">
             <br>
-            <input type="number" name="x1" class="form-control" placeholder="b">
+            <input type="float" name="x1" class="form-control" placeholder="b">
             <br>
             <input type="text" name="Tol" class="form-control" placeholder="Tolerancia">
             <br>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="container md-6">
-    {% if secante_model %}
+    {% if rf_model %}
             <h2>Resultado</h2>
             
             <table class="table table-bordered">
@@ -99,23 +99,22 @@
                         <td>{{ row.f_i }}</td>
                         <td>{{ row.f_s }}</td>
                         <td>{{ row.E }}</td>
-                        x_m","x_i","x_s","f_m","f_i","f_s","E"
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            {% endif %} 
+           
 
             <div class="row mt-4">
                 <div class="col-md-6">
-                    <b>{{ secante_model }}</b>
+                    <b>{{ rf_model }}</b>
                     <br>
-                    <b>{{ secante_model.resultado }}</b>
+                    <b>{{ rf_model.resultado }}</b>
                 </div>
-                {% if "Fracasó" not in secante_model.resultado %}
+                
                 <div class="col-md 6">
-                    <h5>Grafica de la funcion {{ secante_model.func }}</h5>
-                    <img src="/media/grafica_secante.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                    <h5>Grafica de la funcion {{ rf_model.func }}</h5>
+                    <img src="/media/grafica_rf.png" class="img-thumbnail rounded float-end" alt="Imagen">
                 </div>
             </div>
 
