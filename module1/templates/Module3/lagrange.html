@@ -103,8 +103,10 @@
 
 function guardarMatrices() {
     console.log("Hola desde ")
-    var vx = obtenerVector('vectorx');
-    var vy = obtenerVector('vectory');
+    var vectorx = obtenerVector('vectorx');
+    var vectory = obtenerVector('vectory');
+    console.log(vectorx)
+    console.log(vectory)
 
     // Obtener el token CSRF de la cookie
     var csrftoken = getCookie('csrftoken');
@@ -114,14 +116,15 @@ function guardarMatrices() {
         url: "/module1/lagrangem/",  // Ajusta la URL según tu configuración
         type: "POST",
         data: {
-            vectorx: JSON.stringify(vx),
-            vectory: JSON.stringify(vy),
+            vectorx: JSON.stringify(vectorx),
+            vectory: JSON.stringify(vectory),
         },
         headers: { "X-CSRFToken": csrftoken },
         success: function(response) {
-            console.log("Matrices guardadas con éxito:", response);
+            //console.log("Matrices guardadas con éxito:", response);
         },
-        error: function(error) {
+        error: function(xhr, error) {
+            console.log(xhr.responseText); 
             console.error("Error al guardar las matrices:", error);
         }
     });
@@ -129,19 +132,22 @@ function guardarMatrices() {
 
 function obtenerVector(tablaId) {
     var matriz = [];
-    console.log("Hola desde obtener vector")
-    console.log(document.getElementById(tablaId))
-    var cells = document.getElementById(tablaId).cells.length;   
-
-    for (var j = 0; j < cells; j++) {
-        var valor = cells[j].getElementsByTagName("input")[0].value;
-        vector.push(valor);
-    }
-
-        vectorfinal.push(vector);
+    var filas = document.getElementById(tablaId).rows.length;
     
+    for (var i = 0; i < filas; i++) {
+        var fila = document.getElementById(tablaId).rows[i];
+        var columnas = fila.cells.length;
+        var filaMatriz = [];
 
-    return vectorfinal;
+        for (var j = 0; j < columnas; j++) {
+            var valor = fila.cells[j].getElementsByTagName("input")[0].value;
+            filaMatriz.push(valor);
+        }
+
+        matriz.push(filaMatriz);
+    }    
+
+    return matriz;
 }
 
 

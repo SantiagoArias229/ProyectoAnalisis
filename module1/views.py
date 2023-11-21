@@ -230,6 +230,7 @@ def sor(request):
         error = request.POST.get('error')
         
         sor_model = sorModel(A=matriz_a, b=matriz_b, x0=matriz_x0,tol = tol, niter = niter, w=w, error=error)      
+        sor_model.save()
         
         eng = matlab.engine.start_matlab()
         
@@ -242,25 +243,16 @@ def sor(request):
         x0 = matriz_a_string(matX0)
         
         result = eng.sor(x0, A, b, float(tol), float(niter), float(w), error)
+        print(result)
 
         df = pd.read_csv('tables/tabla_sor.csv')
         df = df.astype(str)
         data = df.to_dict(orient='records')
-
-        print(data)
+        eng.quit()  
         
-        context = {
-            'data': data,
-            'sor_model': sor_model,
-            'settings': settings,
-        }
-
-        sor_model.save()
-        print(result)  
-
-        eng.quit()    
+        columnas = df.columns.tolist()
         
-        return render(request, 'Module2/sor.html', context)
+        return JsonResponse({"columnas": columnas, "datos": data}, safe=False)  
     else:
         return render(request, 'Module2/sor.html')
 
@@ -292,19 +284,21 @@ def gs(request):
         result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
         
         
+        
         df = pd.read_csv('tables/tabla_gauss-seidel.csv')
         df = df.astype(str)
         data = df.to_dict(orient='records')
-        
         columnas = df.columns.tolist()
         
         return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)
         
     else:
-        return render(request, 'Module2/gauss-seidel.html')
+        return render(request, 'Module 2/gauss-seidel.html')
 @csrf_exempt
 def lagrangem(request):
+    print("Hola dede la vista antes del if")
     if request.method == 'POST':
+        print("Holaadesde la vista")
         x = json.loads(request.POST.get('vectorx'))
         y = json.loads(request.POST.get('vectory'))        
         
