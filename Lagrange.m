@@ -19,5 +19,4 @@ function [pol] = Lagrange(vx,vy)
         Tabla(i,:)=y(i)*Li/den;
     end
     pol=sum(Tabla);
-
 end
