@@ -88,8 +88,21 @@ class gsModel(models.Model):
     tol = models.FloatField()
     niter=models.IntegerField()
 
+class jacobiModel(models.Model):
+    A = models.JSONField()
+    b = models.JSONField(null=True, blank=True)
+    x0 = models.JSONField(null=True, blank=True)
+    tol = models.FloatField()
+    niter=models.IntegerField()
+
 #MODULE 3
 class lagrange(models.Model):
     x = models.JSONField()
     y = models.JSONField()
+
+class vandermondemodel(models.Model):
+    x = models.JSONField()
+    y = models.JSONField()
+
+
 

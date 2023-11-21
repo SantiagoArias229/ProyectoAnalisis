@@ -290,7 +290,13 @@ def lagrangem(request):
         return render(request, 'Module3/lagrange.html')
     
 def newtonint(request):
-    return render(request, "Module 2/newtonint.html")
+    return render(request, "Module2/newtonint.html")
+
+def jacobi(request):
+    return render(request, 'Module2/jacobi.html')
+
+def vandermonde(request):
+    return render(request, 'Module3/vandermonde.html')
 
 
 @csrf_exempt   

@@ -1,0 +1,120 @@
+{% extends 'home.html' %}
+{% block content %}
+{% block title %}
+<Secante>
+{% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
+        
+        .title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe5b4;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+</head>
+
+<body>
+    <div class="title-container">
+        <h1 class="title text-gray-900 display-4">Método de la secante</h1>
+    </div>
+    <div class="subtitle text-gray-700 display-6">
+        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos. </div>
+    <br>
+
+    <div class="container-fluid col-md-6">
+        <br>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="func" class="form-control" placeholder="Función">
+            <br>
+            <input type="number" name="x0" class="form-control" placeholder="a">
+            <br>
+            <input type="number" name="x1" class="form-control" placeholder="b">
+            <br>
+            <input type="text" name="Tol" class="form-control" placeholder="Tolerancia">
+            <br>
+            <input type="number" name="niter" class="form-control" placeholder="Iteraciones">
+            <br>
+            <p class="subtitle text-gray-700 display-6">El tipo de error está dado por 0 para error absoluto y 1 para error relativo. Ingrese el que corresponda, al ingresar un valor invalido por defecto se tomará el error relativo.</p>
+            <input type="number" name="Terror" class="form-control" placeholder="Tipo de Error">
+            <br>
+            <div class="text-center">
+                <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
+              </div>
+        </form>
+
+    </div>
+
+    <div class="container md-6">
+    {% if secante_model %}
+            <h2>Resultado</h2>
+            
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>xn</th>
+                        <th>fxn</th>
+                        <th>E</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.Iteration }}</td>
+                        <td>{{ row.xn }}</td>
+                        <td>{{ row.fxn }}</td>
+                        <td>{{ row.E }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %} 
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <b>{{ secante_model }}</b>
+                    <br>
+                    <b>{{ secante_model.resultado }}</b>
+                </div>
+                {% if "Fracasó" not in secante_model.resultado %}
+                <div class="col-md 6">
+                    <h5>Grafica de la funcion {{ secante_model.func }}</h5>
+                    <img src="/media/grafica_secante.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                </div>
+            </div>
+
+
+
+    </div>
+
+    {% endif %}
+{% endblock %}
+</body>
+</html>
