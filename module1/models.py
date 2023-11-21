@@ -88,6 +88,13 @@ class gsModel(models.Model):
     tol = models.FloatField()
     niter=models.IntegerField()
 
+class jacobiModel(models.Model):
+    A = models.JSONField()
+    b = models.JSONField(null=True, blank=True)
+    x0 = models.JSONField(null=True, blank=True)
+    tol = models.FloatField()
+    niter=models.IntegerField()
+
 #MODULE 3
 class lagrange(models.Model):
     x = models.JSONField()
@@ -97,6 +104,12 @@ class newtonintModel(models.Model):
     x = models.FloatField()
     y = models.FloatField()
     pol = models.TextField(max_length=2000)
+
+
+
+class vandermondemodel(models.Model):
+    x = models.JSONField()
+    y = models.JSONField()
 
 
 

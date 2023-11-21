@@ -22,6 +22,8 @@ function [E,s] = SOR(x0,A,b,Tol,niter,w, error)
         c=c+1;
        
     end 
+
+    % Calcula el radio espectral
       
     if error < Tol
         s=x0;
@@ -32,7 +34,7 @@ function [E,s] = SOR(x0,A,b,Tol,niter,w, error)
         s=x0;
         n=c;
         fprintf('Fracasó en %f iteraciones',niter) 
-    end
+    end   
 
     tabla = table(s, 'VariableNames', {'solucion'});
         
