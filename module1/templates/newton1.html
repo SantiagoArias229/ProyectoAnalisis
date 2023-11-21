@@ -1,4 +1,5 @@
 {% extends 'home.html' %}
+{% load static %}
 {% block content %}
 {% block title %}
 <Newton1>
@@ -47,74 +48,114 @@
     <div class="subtitle text-gray-700 display-6">
         se ingresa la función, el valor inicial (x0), la tolerancia del error (Tol) y el máximo número de iteraciones... </div>
     <br>
-
+    <div class="subtitle text-gray-700 display-6">
+        Se tiene el punto incial x0, hace una linea tangente ahi y esta linea corta al eje x se vuelve el x1, y sigue haciendo lo mismo </div>
+    <br>
+    <div class="subtitle text-gray-700 display-6">
+        <b>Para tener en cuenta:</b> f tiene que ser derivable y la derivada tiene que ser diferente de 0 (cero), y no debe calcular cerca de minimos y maximos locales puesto que no permitira converger el metodo </div>
+        <br>
+    <div class="subtitle text-gray-700 display-6">
+        <b>Para copiar la funcion debes: </b> <b>*</b> para exponentes utilizar <b>^</b>, <b>*</b> para euler copiar <b>'exp(1)'</b>, <b>*</b> para el logaritmo natural copiar <b>'log()'</b>, <b>*</b> para valor absoluto copiar <b>'abs()'</b>   </div>
     <div class="container-fluid col-md-6">
 
         <br>
-        <form action="" method="POST">
+        <form  action="{% url 'newton1' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="func" class="form-control" placeholder="Función">
-            <br>
-            <input type="number" name="x0" class="form-control" placeholder="x0">
-            <br>
-            <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
-            <br>
-            <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
-            <br>
-            <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
-        </form>
-
-
-    </div>
-
-    <div class="container md-6">
-    
-        {% if newton1_model %}
-            <h2>Resultado</h2>
-            {% if "Error" not in newton_model.resultado %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Iteration</th>
-                        <th>xn</th>
-                        <th>x0</th>
-                        <th>func</th>
-                        <th>Error</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in data %}
-                    <tr>
-                        <td>{{ row.Iteration }}</td>
-                        <td>{{ row.xn1 }}</td>
-                        <td>{{ row.X0}}</td>
-                        <td>{{ row.func }}</td>
-                        <td>{{ row.Error }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
-
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <b>{{ newton1_model }}</b>
-                    <br>
-                    <b>{{ newton1_model.resultado }}</b>
-                </div>
-                {% if "Error" not in newton1_model.resultado %}
-                <div class="col-md 6">
-                    <h5>Grafica de la funcion {{ newton1_model.func }}</h5>
-                    <img src="/media/grafica_newton.png" class="img-thumbnail rounded float-end" alt="Imagen">
-                </div>
-            {% endif %}
+            <div class="mb-3">
+                <label for="funcion" class="form-label">Función es f(x)</label>
+                <input type="text" class="form-control" id="funcion" name="funcion" aria-describedby="info" required>
+                
             </div>
+            <div class="mb-3">
+                <label for="x0" class="form-label">Valor inicial (x0)</label>
+                <input type="text" class="form-control" id="x0" name="x0" required>
+            </div>
+            <div class="mb-3">
+                <label for="tolerancia" class="form-label">Tolerancia</label>
+                <input type="text" class="form-control" id="tolerancia" name="tolerancia" required>
+            </div>
+            <div class="mb-3">
+                <label for="tipoError" class="form-label">Tipo de error</label>
+                <input type="number" class="form-control" id="tipoError" name="tipoError" required>
+            </div>
+            <div class="mb-3">
+                <label for="niter" class="form-label">Cantidad máxima de iteraciones</label>
+                <input type="text" class="form-control" id="niter" name="niter" required>
+            </div>
+            <div class="text-center">
+                <button id="calculateBtn" type="submit" class="btn btn-primary">Calcular</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="card" style="margin: 2em;">
+                
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="card" style="margin:2em;">
+
+                <h2 style="margin:0.5em;">Gráfica</h2>
+                <div class="w-100" style="height: 2px; background-color: rgba(210, 210, 210);"></div>
+                {% if graph %}
+                <div class="card mx-auto" style="height: 60%; width: 60%; margin:1em;">
+                    <div class="card-body">
+                        {% block function_image %}
+                        <img class="w-100 h-100 object-fit-scale" alt="Gráfica de la función" src="{% static 'images/newton.png' %}">
+
+                        {% endblock %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <h2 style="margin:0.5em;">Tabla de iteraciones</h2>
+                <div class="w-100" style="height: 2px; background-color: rgba(210, 210, 210);"></div>
+                {% if table %}
+                <div class="card" style="margin:1em;">
+                    <div class="card-body">
+                        <table class="table table-bordered text-center m-0">
+                            <thead>
+                                <tr>
+                                    {% for i in title %}
+                                        <th scope="col">{{i}}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for info in table %}
+                                    <tr>
+                                        {% for d in info %}
+                                        <td>{{d}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <h2 style="margin:0.5em;">Solución</h2>
+                <div class="w-100" style="height: 2px; background-color: rgba(210, 210, 210);"></div>
+                {% if sol %}
+                <div class="card" style="margin:1em;">
+                    <div class="card-body">
+                        <p class="card-text">{{sol}}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
 
 
 
     </div>
+    
 
-    {% endif %}
 {% endblock %}
 </body>
 </html>
