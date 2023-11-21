@@ -92,7 +92,48 @@ def rf(request):
         return render(request, "rf.html")
 
 def newton1(request):
-    return render(request, "newton1.html")
+    if (request.method == 'POST'):
+
+        eng = matlab.engine.start_matlab()
+
+        x0 = request.POST.get('x0')   
+        tol = request.POST.get('tolerancia')
+        typeTol = request.POST.get('tipoError')
+        niter = request.POST.get('niter')
+        func = request.POST.get('funcion') 
+        
+        eng.newton(float(x0),float(tol),float(typeTol),float(niter),func) 
+        Data('newton.png', 'newton.csv')
+
+        columnNames, table, sol = Table('newton.csv', tol, niter)
+
+        return render(request, 'newton1.html', context={'graph':True, 'title':columnNames, 'table':table,'sol':sol})
+    return render(request, "newton1.html",  context={})
+
+def Table(file_name, tol, niter):
+    file = os.path.join(BASE_DIR, 'module1', 'static', 'csv', file_name)
+    csv = open(file, 'r')
+    data = csv.readlines()
+    column = data[0].split(',')
+    column[len(column)-1] = column[len(column)-1].replace('\n','')
+
+    table = []
+    for i in range(1, len(data)):
+        row = data[i].split(',')
+        row[len(row)-1] = row[len(row)-1].replace('\n','')
+        table.append(row)
+
+    
+    row = table[len(table)-1]
+    if(row[len(row)-1] == '-'):
+        sol = " intervalo inadecuado"
+    elif(float(row[len(row)-1]) <= float(tol)):
+        sol = row[1]
+        sol = f"La solución es: {sol}"
+    else:
+        sol=f"No se llegó a la respuesta con {niter} iteraciones"
+
+    return column, table, sol
 
 def secante(request):
     if request.method == "POST":
