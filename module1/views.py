@@ -6,6 +6,10 @@ from .models import *
 import matlab.engine
 import pandas as pd
 import json
+
+from proyecto_analisis.settings import BASE_DIR
+import os
+
 # Create your views here.
 
 def matriz_a_string(matriz):
@@ -65,31 +69,71 @@ def pf(request):
         return render(request, "pf.html")
 
 def rf(request):
-   if request.method == "POST":
-       
+    if request.method == "POST":
+            eng = matlab.engine.start_matlab()
+
+            result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+            
+            df = pd.read_csv('tables/tabla_rf.csv')
+            df = df.astype(str)
+            data = df.to_dict(orient='records')
+            
+
+            rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+            rf_model.save()
+            context = {
+                'rf_model': rf_model,
+                'data': data,
+                'settings': settings,
+            }        
+            eng.quit()
+            return render(request, "rf.html", context)
+    else:
+        return render(request, "rf.html")
+
+def newton1(request):
+    if (request.method == 'POST'):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        x0 = request.POST.get('x0')   
+        tol = request.POST.get('tolerancia')
+        typeTol = request.POST.get('tipoError')
+        niter = request.POST.get('niter')
+        func = request.POST.get('funcion') 
         
-        df = pd.read_csv('tables/tabla_rf.csv')
-        df = df.astype(str)
-        data = df.to_dict(orient='records')
-        
+        eng.newton(float(x0),float(tol),float(typeTol),float(niter),func) 
+        Data('newton.png', 'newton.csv')
 
-        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
-        rf_model.save()
-        context = {
-            'rf_model': rf_model,
-            'data': data,
-            'settings': settings,
-        }        
-        eng.quit()
-        
-        return render(request, "rf.html", context)
+        columnNames, table, sol = Table('newton.csv', tol, niter)
 
-def newton1(request):
-    return render(request, "newton1.html")
+        return render(request, 'newton1.html', context={'graph':True, 'title':columnNames, 'table':table,'sol':sol})
+    return render(request, "newton1.html",  context={})
+
+def Table(file_name, tol, niter):
+    file = os.path.join(BASE_DIR, 'module1', 'static', 'csv', file_name)
+    csv = open(file, 'r')
+    data = csv.readlines()
+    column = data[0].split(',')
+    column[len(column)-1] = column[len(column)-1].replace('\n','')
+
+    table = []
+    for i in range(1, len(data)):
+        row = data[i].split(',')
+        row[len(row)-1] = row[len(row)-1].replace('\n','')
+        table.append(row)
+
+    
+    row = table[len(table)-1]
+    if(row[len(row)-1] == '-'):
+        sol = " intervalo inadecuado"
+    elif(float(row[len(row)-1]) <= float(tol)):
+        sol = row[1]
+        sol = f"La solución es: {sol}"
+    else:
+        sol=f"No se llegó a la respuesta con {niter} iteraciones"
+
+    return column, table, sol
 
 def secante(request):
     if request.method == "POST":
@@ -283,5 +327,115 @@ def lagrangem(request):
         return render(request, 'Module3/lagrange.html')
     
 def newtonint(request):
-    return render(request, "Module 2/newtonint.html")
+    return render(request, "Module2/newtonint.html")
 
+def jacobi(request):
+    return render(request, 'Module2/jacobi.html')
+
+def vandermonde(request):
+    return render(request, 'Module3/vandermonde.html')
+
+
+@csrf_exempt   
+def lineal(request):
+    if(request.method=='POST'):
+        
+        eng = matlab.engine.start_matlab()
+        
+        x=request.POST.get('x')
+        x=x.replace(' ','')
+        
+        xFile=open("puntosX.txt",'w')
+        xFile.write(x)
+        xFile.close()
+        
+        y=request.POST.get('y')
+        y=y.replace(' ','')
+        print(x)
+        print(y)
+        
+        yFile=open("puntosY.txt",'w')
+        yFile.write(y)
+        yFile.close()
+
+        #corremos matlab
+        eng.Spline(1)
+        
+        try:
+            csv_file = open('Spline_Lineal.csv', 'r')
+            data = csv_file.readlines()
+            columnNames = data[0].split(',')
+            columnNames[len(columnNames)-1] = columnNames[len(columnNames)-1].replace('\n','')
+            table = []
+            for i in range(1, len(data)):
+                row = data[i].split(',')
+                row[len(row)-1] = row[len(row)-1].replace('\n','')
+                table.append(row)
+                csv_file.close()
+        except PermissionError as e:
+            print(f"Error de permisos: {e}")
+
+        Data('grafica_lineal.png', 'Spline_Lineal.csv')    
+        
+        return render(request, 'lineal.html',context={'graph':True,'tabla':table,'title':columnNames})
+    
+    return render(request, "lineal.html", context={})
+
+@csrf_exempt   
+def cubico(request):
+    if(request.method=='POST'):
+        
+        eng = matlab.engine.start_matlab()
+        
+        x=request.POST.get('x')
+        x=x.replace(' ','')
+        
+        xFile=open("puntosX.txt",'w')
+        xFile.write(x)
+        xFile.close()
+        
+        y=request.POST.get('y')
+        y=y.replace(' ','')
+        print(x)
+        print(y)
+       
+        yFile=open("puntosY.txt",'w')
+        yFile.write(y)
+        yFile.close()
+
+        eng.Spline(3)
+        
+        try:
+            csv_file = open('Spline_Lineal.csv', 'r')
+            data = csv_file.readlines()
+            columnNames = data[0].split(',')
+            columnNames[len(columnNames)-1] = columnNames[len(columnNames)-1].replace('\n','')
+            table = []
+            for i in range(1, len(data)):
+                row = data[i].split(',')
+                row[len(row)-1] = row[len(row)-1].replace('\n','')
+                table.append(row)
+                csv_file.close()
+        except PermissionError as e:
+            print(f"Error de permisos: {e}")
+
+        Data('grafica_lineal.png', 'Spline_Lineal.csv')    
+        
+        return render(request, 'cubico.html',context={'graph':True,'tabla':table,'title':columnNames})
+    
+    return render(request, "cubico.html", context={})
+
+def Data(image_name, csv_name):
+    
+    file_path = os.path.join(BASE_DIR, image_name)
+    destination_path = os.path.join(BASE_DIR, 'module1', 'static', 'images', image_name)
+    if(os.path.isfile(destination_path)):
+        os.remove(destination_path)
+    os.rename(file_path, destination_path)
+    
+    
+    file_path = os.path.join(BASE_DIR, csv_name)
+    destination_path = os.path.join(BASE_DIR, 'module1', 'static', 'csv', csv_name)
+    if(os.path.isfile(destination_path)):
+        os.remove(destination_path)
+    os.rename(file_path, destination_path)
