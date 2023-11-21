@@ -301,7 +301,7 @@ def gs(request):
         return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)
         
     else:
-        return render(request, 'Module 2/gauss-seidel.html')
+        return render(request, 'Module2/gauss-seidel.html')
 @csrf_exempt
 def lagrangem(request):
     if request.method == 'POST':
