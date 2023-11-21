@@ -6,6 +6,7 @@ from .models import *
 import matlab.engine
 import pandas as pd
 import json
+import csv
 # Create your views here.
 
 def matriz_a_string(matriz):
@@ -26,6 +27,26 @@ def vector_a_string(vector):
         resultado += " ".join(map(str, vector[i]))
     resultado += "]"
     return resultado
+
+def construir_polinomio_newton(csv_newton):
+    with open('pol_newtonInter.csv', 'r') as archivo_csv:
+        reader = csv.reader(archivo_csv, delimiter=',')
+        valores = next(reader)  # Suponiendo que hay solo una línea en el archivo
+    
+    polinomio = ""
+    
+    n = len(valores)
+    i = 1
+    
+    for coef in valores:
+        polinomio = polinomio + f"{coef}x^{n-i}+"
+        i += 1
+    
+    len_pol = len(polinomio)
+    polinomio = polinomio[:len_pol-1]
+    
+    return polinomio
+
 
 def home(request):
     return render(request, "home.html")
@@ -65,8 +86,8 @@ def pf(request):
         return render(request, "pf.html")
 
 def rf(request):
-   if request.method == "POST":
-       
+    if request.method == "POST":
+    
 
         eng = matlab.engine.start_matlab()
 
@@ -93,7 +114,7 @@ def newton1(request):
 
 def secante(request):
     if request.method == "POST":
-       
+    
 
         eng = matlab.engine.start_matlab()
 
@@ -126,7 +147,7 @@ def biseccion(request):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]))
+        result = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]), float(request.POST["error"]))
         
         
         df = pd.read_csv('tables/tabla_biseccion.csv')
@@ -153,7 +174,7 @@ def raices_multiples(request):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.raicesMultiples(float(request.POST["x0"]) , float(request.POST["tol"]), float(request.POST["iteraciones"]),str(request.POST["func"]))
+        result = eng.raicesMultiples(float(request.POST["x0"]) , float(request.POST["tol"]), float(request.POST["iteraciones"]),str(request.POST["func"]), float(request.POST["error"]))
         
         df = pd.read_csv('tables/tabla_raicesMultiples.csv')
         df = df.astype(str)
@@ -257,7 +278,7 @@ def gs(request):
         return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)
         
     else:
-        return render(request, 'Module 2/gauss-seidel.html')
+        return render(request, 'Module2/gauss-seidel.html')
 
 
 @csrf_exempt
@@ -287,7 +308,34 @@ def lagrangem(request):
         return redirect(request.path_info)
     else:
         return render(request, 'Module3/lagrange.html')
-    
+
+
+
 def newtonint(request):
-    return render(request, "Module 2/newtonint.html")
+    if request.method == 'POST':
+        cantidad_puntos = int(request.POST['cantidadPuntos'])
+        vector_x = []
+        vector_y = []
+
+
+        for i in range(cantidad_puntos):
+            coordenada_x = float(request.POST[f'coordenadaX_{i}'])
+            coordenada_y = float(request.POST[f'coordenadaY_{i}'])
+            
+            vector_x.append(coordenada_x)
+            vector_y.append(coordenada_y)
+            
+            
+        
+        eng = matlab.engine.start_matlab()
+        rest = eng.Newtonint(vector_x, vector_y)
+
+        polinomio_final = construir_polinomio_newton('pol_newtonInter.csv')
+        
+        eng.quit()
+
+        return render(request, "Module3/newtonint.html", {'polinomio':polinomio_final})
+    
+    else:
+        return render(request, "Module3/newtonint.html")
 

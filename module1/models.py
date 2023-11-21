@@ -93,3 +93,10 @@ class lagrange(models.Model):
     x = models.JSONField()
     y = models.JSONField()
 
+class newtonintModel(models.Model):
+    x = models.FloatField()
+    y = models.FloatField()
+    pol = models.TextField(max_length=2000)
+
+
+

@@ -45,7 +45,9 @@
     </div>
 
     <div class="subtitle text-gray-700 display-6">
-        El método numérico de biseccion es ... </div>
+        <p>El método de bisección es un algoritmo de búsqueda de raíces que trabaja dividiendo el intervalo a la mitad y seleccionando el subintervalo que tiene la raíz.<br> Esto se logra llevar a cabo a través de varias interaciones que son aplicadas en un intervalo para por medio de ello encontrar la raíz de la función. </p>
+        <p>Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos. </p>
+    </div>
     <br>
 
     <div class="container-fluid col-md-6">
@@ -59,9 +61,12 @@
             <br>
             <input type="number" name="xs" class="form-control" placeholder="b">
             <br>
-            <input type="text" name="tol" class="form-control" placeholder="Tolerancia">
+            <input type="number" name="tol" class="form-control" placeholder="Tolerancia">
             <br>
             <input type="number" name="iteraciones" class="form-control" placeholder="Iteraciones">
+            <br>
+            <p class="subtitle text-gray-700 display-6">El tipo de error está dado por 0 para error absoluto y 1 para error relativo. Ingrese el que corresponda, al ingresar un valor invalido por defecto se tomará el error absoluto</p>
+            <input type="number"  name="error" class="form-control" placeholder="Tipo de error">
             <br>
             <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
         </form>

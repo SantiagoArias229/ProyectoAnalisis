@@ -26,9 +26,14 @@
             text-align: center;
         }
     </style>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <!-- Incluir jQuery y Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -58,8 +63,8 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="/modulo1">Jacobi</a></li>
-                    <li><a class="dropdown-item" href="#">Gauss-Seidel</a></li>
-                    <li><a class="dropdown-item" href="/modulo3">SOR</a></li>
+                    <li><a class="dropdown-item" href="{% url 'gs' %}">Gauss-Seidel</a></li>
+                    <li><a class="dropdown-item" href="{% url 'sor' %}">SOR</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown d-inline-block">
@@ -68,8 +73,8 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="/modulo1">Vandermonde</a></li>
-                    <li><a class="dropdown-item" href="/modulo2">Newton</a></li>
-                    <li><a class="dropdown-item" href="/modulo3">Lagrange</a></li>
+                    <li><a class="dropdown-item" href="{% url 'newtonint' %}">Newton</a></li>
+                    <li><a class="dropdown-item" href="{% url 'lagrangem' %}">Lagrange</a></li>
                     <li><a class="dropdown-item" href="/modulo3">Lineal</a></li>
                     <li><a class="dropdown-item" href="/modulo3">Cubico</a></li>
                     </ul>
@@ -82,16 +87,13 @@
 
     <div class="container mt-4">
         <h2 class="text-center">Metodo Gauss-Seidel</h2>
-
+        <p>Jacobi: es un método iterativo para resolver sistemas de ecuaciones lineales más simple y se aplica sólo a sistemas cuadrados, es decir, a sistemas con tantas incógnitas como ecuaciones.</p>
+        <p>Gauss-Seidel: es muy semejante al método de Jacobi. Mientras que en el de Jacobi se utiliza el valor de las incógnitas para determinar una nueva aproximación, en el de Gauss-Seidel se va utilizando los valores de las incógnitas recien calculados en la misma iteración, y no en la siguiente.</p>
         <!-- Formulario para definir el tamaño de la matriz -->
-        <form id="tamanioForm" class="form-inline mb-3">
+        <form id="tamanioForm" class="form-inline mb-3 mt-5">
             <div class="form-group mr-2">
-                <label for="filas" class="mr-2">Filas:</label>
+                <label for="filas" class="mr-2">Tamaño de la matriz: </label>
                 <input type="number" id="filas" name="filas" min="1" class="form-control" required>
-            </div>
-            <div class="form-group mr-2">
-                <label for="columnas" class="mr-2">Columnas:</label>
-                <input type="number" id="columnas" name="columnas" min="1" class="form-control" required>
             </div>
             <button type="button" onclick="generarMatrizA();  generarMatrizb(); generarMatrizx0()" class="btn btn-primary">Generar Matriz</button>
         </form>
@@ -128,8 +130,6 @@
         </div>
     
         <button onclick='guardarMatrices();' class='btn btn-success'>Ejecutar Metodo</button>
-
-        <h5>{{ prueba }}</h5>
     
         
         <h3> Resultado Tabla  </h3>

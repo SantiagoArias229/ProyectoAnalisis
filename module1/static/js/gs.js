@@ -1,6 +1,5 @@
         function generarMatrizA() {
-            var filas = parseInt(document.getElementById("filas").value);
-            var columnas = parseInt(document.getElementById("columnas").value);
+            var filas = parseInt(document.getElementById("filas").value); 
             var tabla = document.getElementById("matrizInput");
 
             // Limpiar la tabla
@@ -9,7 +8,7 @@
             for (var i = 0; i < filas; i++) {
                 var fila = tabla.insertRow(i);
 
-                for (var j = 0; j < columnas; j++) {
+                for (var j = 0; j < filas; j++) {
                     var celda = fila.insertCell(j);
                     var input = document.createElement("input");
                     input.type = "number";

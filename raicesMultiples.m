@@ -1,6 +1,6 @@
 %Newton: se ingresa el valor inicial (x0), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
-function [respuesta,n,s, rn, fm,dfm,df2m,E] = raicesMultiples(x0,Tol,niter, func)
+function [respuesta,n,s, rn, fm,dfm,df2m,E] = raicesMultiples(x0,Tol,niter, func, error)
     syms x
 
     respuesta = "Error: No se encontró una raíz en la función"
@@ -29,8 +29,16 @@ function [respuesta,n,s, rn, fm,dfm,df2m,E] = raicesMultiples(x0,Tol,niter, func
             dfe=dfm(c+2);
             df2m(c+2)=eval(subs(df2,xn));
             dfe2=df2m(c+2);
+
+            if(error==1)
+            E(c+2)=abs((xn-x0)/xn);
+            error=E(c+2);            
+            else 
             E(c+2)=abs(xn-x0);
             error=E(c+2);
+            end
+
+
             s(c+2)=x0;
             rn(c+2)=xn;
             x0=xn;            
