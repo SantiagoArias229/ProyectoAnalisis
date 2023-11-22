@@ -3,13 +3,12 @@
 %de Gauss Seidel (Matricial), depende del método elegido, se elige 0 o 1 en met
 %respectivamente
 
-function [radio,E,s] = MatGaussSeid(x0,A,b,Tol,niter)
+function [radio,E,s] = MatGaussSeid(x0,A,b,Tol,niter, met)
 
     A = str2num(A);
     b = str2num(b);
     x0 = str2num(x0);
 
-    met = 1;
     c=0;
     error=Tol+1;
     D=diag(diag(A));
@@ -27,9 +26,9 @@ function [radio,E,s] = MatGaussSeid(x0,A,b,Tol,niter)
             x1=T*x0+C;
         end
         if met==1
-            T=inv(D-L)*(U);
-            C=inv(D-L)*b;
-            x1=T*x0+C;
+            T=inv(D-L)*(U); % ecuacion de matriz trasicion gs
+            C=inv(D-L)*b;  % ecuacion de vector constante gs
+            x1=T*x0+C; % ecuacion para proxima iteracion de x
         end
         E(c+2)=norm((x1-x0)/x1,'inf');
         error=E(c+2);
@@ -39,6 +38,7 @@ function [radio,E,s] = MatGaussSeid(x0,A,b,Tol,niter)
         n(c+1)=c;
         Xt(:,c+1)=x0;
     end
+
 
     % Calcula el radio espectral
     radio = max(abs(eig(T)));

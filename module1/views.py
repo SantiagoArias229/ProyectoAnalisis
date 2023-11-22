@@ -43,9 +43,7 @@ def construir_polinomio_newton(csv_newton):
     i = 1
     
     for coef in valores:
-        if n-i == 1:
-            polinomio = polinomio + f"{coef}x+"
-        if coef != 0:
+        if coef != '0':
             polinomio = polinomio + f"{coef}x^{n-i}+"
         
         i += 1
@@ -293,6 +291,7 @@ def gs(request):
         
         tol = request.POST.get('tol')
         niter = request.POST.get('niter')
+        met = request.POST.get('met')
         
         gaussSeidel_model = gsModel(A=matriz_a, b=matriz_b, x0=matriz_x0,tol = tol, niter = niter)
         gaussSeidel_model.save()
@@ -307,7 +306,8 @@ def gs(request):
         b = matriz_a_string(matB)
         x0 = matriz_a_string(matX0)
         
-        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))       
+        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter), int(met))
+        
         
         
         df = pd.read_csv('tables/tabla_gauss-seidel.csv')

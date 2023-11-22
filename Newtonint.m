@@ -16,7 +16,7 @@ format short
     Tabla(:,2)=y;
     for j=3:n+1
         for i=j-1:n
-            Tabla(i,j)=(Tabla(i,j-1)-Tabla(i-1,j-1))/(Tabla(i,1)-Tabla(i-j+2,1));
+            Tabla(i,j)=(Tabla(i,j-1)-Tabla(i-1,j-1))/(Tabla(i,1)-Tabla(i-j+2,1)); %n-esima diferencia divida 
         end
     end
 
@@ -29,11 +29,11 @@ format short
     for i=1:n-1
         pol=[0 pol];
         acum=conv(acum,[1 -x(i)]);
-        pol=pol+coef(i+1)*acum;
+        pol=pol+coef(i+1)*acum; %subtermino de polinomio de newton: pn(x) = b0 + b1(x-x0)+...+bn(x-x0)(x-x1)...(x-xn-1) 
     end
 
         % Generar valores de x
-        xpol=x(1):0.001:x(end);
+        xpol=min(x):0.001:max(x);
         
         p =zeros(size(x));
         p = p';

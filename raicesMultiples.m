@@ -6,28 +6,35 @@ function [respuesta,n,s, rn, fm,dfm,df2m,E] = raicesMultiples(x0,Tol,niter, func
     respuesta = "Error: No se encontró una raíz en la función"
 
         f=evalin(symengine,func);
-        df=diff(f);
-        df2=diff(df);
+        
+        df=diff(f); %primera deriva
+        df2=diff(df); %segunda derivada
+        
         c=0;
-        fm(c+1) = eval(subs(f,x0));
+        
+        fm(c+1) = eval(subs(f,x0)); %evaluacion de x0 en la funcion
         fe=fm(c+1);
-        dfm(c+1) = eval(subs(df,x0));
-        df2m(c+1) = eval(subs(df2,x0));
+        
+        dfm(c+1) = eval(subs(df,x0)); %evaluacion de x0 en la primera derivada
+        df2m(c+1) = eval(subs(df2,x0)); %evaluacion de x0 en la segunda derivada
         dfe=dfm(c+1);
         dfe2=df2m(c+1);
+        
         E(c+1)=Tol+1;
         error=E(c+1);
+        
         xn=x0;
         n(c+1)=c;
         s(c+1)=x0;
         rn(c+1)=x0;
+        
         while error>Tol && c < niter && fe~=0
-            xn=x0-((fe*dfe)/(dfe^2-(fe*dfe2)));
-            fm(c+2)=eval(subs(f,xn));
+            xn=x0-((fe*dfe)/(dfe^2-(fe*dfe2))); %formula para xn+1
+            fm(c+2)=eval(subs(f,xn)); %evaluacion de xn en la funcion
             fe=fm(c+2);
-            dfm(c+2)=eval(subs(df,xn));
+            dfm(c+2)=eval(subs(df,xn)); %evaluacion de xn en la primera derivada
             dfe=dfm(c+2);
-            df2m(c+2)=eval(subs(df2,xn));
+            df2m(c+2)=eval(subs(df2,xn)); %evaluacion de xn en la segunda derivada
             dfe2=df2m(c+2);
 
             if(error==1)
