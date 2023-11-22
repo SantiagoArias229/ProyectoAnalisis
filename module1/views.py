@@ -43,7 +43,11 @@ def construir_polinomio_newton(csv_newton):
     i = 1
     
     for coef in valores:
-        polinomio = polinomio + f"{coef}x^{n-i}+"
+        if n-i == 1:
+            polinomio = polinomio + f"{coef}x+"
+        if coef != 0:
+            polinomio = polinomio + f"{coef}x^{n-i}+"
+        
         i += 1
     
     len_pol = len(polinomio)
@@ -95,22 +99,22 @@ def rf(request):
 
         eng = matlab.engine.start_matlab()
 
-            result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
-            
-            df = pd.read_csv('tables/tabla_rf.csv')
-            df = df.astype(str)
-            data = df.to_dict(orient='records')
-            
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        
+        df = pd.read_csv('tables/tabla_rf.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
 
-            rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
-            rf_model.save()
-            context = {
-                'rf_model': rf_model,
-                'data': data,
-                'settings': settings,
-            }        
-            eng.quit()
-            return render(request, "rf.html", context)
+        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+        rf_model.save()
+        context = {
+            'rf_model': rf_model,
+            'data': data,
+            'settings': settings,
+        }        
+        eng.quit()
+        return render(request, "rf.html", context)
     else:
         return render(request, "rf.html")
 
@@ -352,7 +356,32 @@ def lagrangem(request):
 
 
 def newtonint(request):
-    return render(request, "Module2/newtonint.html")
+    if request.method == 'POST':
+        cantidad_puntos = int(request.POST['cantidadPuntos'])
+        vector_x = []
+        vector_y = []
+
+
+        for i in range(cantidad_puntos):
+            coordenada_x = float(request.POST[f'coordenadaX_{i}'])
+            coordenada_y = float(request.POST[f'coordenadaY_{i}'])
+            
+            vector_x.append(coordenada_x)
+            vector_y.append(coordenada_y)
+            
+            
+        
+        eng = matlab.engine.start_matlab()
+        rest = eng.Newtonint(vector_x, vector_y)
+
+        polinomio_final = construir_polinomio_newton('pol_newtonInter.csv')
+        
+        eng.quit()
+
+        return render(request, "Module3/newtonint.html", {'polinomio':polinomio_final})
+    
+    else:
+        return render(request, "Module3/newtonint.html")
 
 def jacobi(request):
     return render(request, 'Module2/jacobi.html')
@@ -423,7 +452,7 @@ def cubico(request):
         y=y.replace(' ','')
         print(x)
         print(y)
-       
+
         yFile=open("puntosY.txt",'w')
         yFile.write(y)
         yFile.close()
@@ -464,30 +493,5 @@ def Data(image_name, csv_name):
     if(os.path.isfile(destination_path)):
         os.remove(destination_path)
     os.rename(file_path, destination_path)
-    if request.method == 'POST':
-        cantidad_puntos = int(request.POST['cantidadPuntos'])
-        vector_x = []
-        vector_y = []
 
-
-        for i in range(cantidad_puntos):
-            coordenada_x = float(request.POST[f'coordenadaX_{i}'])
-            coordenada_y = float(request.POST[f'coordenadaY_{i}'])
-            
-            vector_x.append(coordenada_x)
-            vector_y.append(coordenada_y)
-            
-            
-        
-        eng = matlab.engine.start_matlab()
-        rest = eng.Newtonint(vector_x, vector_y)
-
-        polinomio_final = construir_polinomio_newton('pol_newtonInter.csv')
-        
-        eng.quit()
-
-        return render(request, "Module3/newtonint.html", {'polinomio':polinomio_final})
-    
-    else:
-        return render(request, "Module3/newtonint.html")
 
