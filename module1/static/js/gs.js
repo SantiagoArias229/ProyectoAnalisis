@@ -71,6 +71,8 @@ function guardarMatrices() {
 
     var tol = document.getElementById("tolerancia").value;
     var niter = document.getElementById("niter").value;
+    var met = document.getElementById("met").value;
+
 
     // Obtener el token CSRF de la cookie
     var csrftoken = getCookie('csrftoken');
@@ -85,6 +87,7 @@ function guardarMatrices() {
             matrizX0: JSON.stringify(matrizX0),
             tol: tol,
             niter: niter,
+            met: met,
         },
         headers: { "X-CSRFToken": csrftoken },
         success: function(data) {

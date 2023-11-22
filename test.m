@@ -1,55 +1,59 @@
-%Newtonint: Calcula los coeficienetes del polinomio de interpolación de
-% grado n-1 para el conjunto de n datos (x,y), mediante el método de Newton
-% con diferencias divididas.
-function [Tabla] = test(x,y)
+%MatJacobiSeid: Calcula la solución del sistema
+%Ax=b con base en una condición inicial x0,mediante el método de Jacobi o
+%de Gauss Seidel (Matricial), depende del método elegido, se elige 0 o 1 en met
+%respectivamente
 
-format short
+function [radio,E,s] = test(x0,A,b,Tol,niter, met)
 
-    %number of points
-    n=length(x);
+    c=0;
+    error=Tol+1;
+    D=diag(diag(A));
+    L=-tril(A,-1);
+    U=-triu(A,+1);
 
-    Tabla=zeros(n,n+1);
-    Tabla(:,1)=x;
-    Tabla(:,2)=y;
-    for j=3:n+1
-        for i=j-1:n
-            Tabla(i,j)=(Tabla(i,j-1)-Tabla(i-1,j-1))/(Tabla(i,1)-Tabla(i-j+2,1));
+    Xt(:,c+1)=x0;
+    n(1)=c;
+    E(c+1)=error;
+
+    while error>Tol && c<niter
+        if met==0
+            T=inv(D)*(L+U);
+            C=inv(D)*b;
+            x1=T*x0+C;
         end
+        if met==1
+            T=inv(D-L)*(U);
+            C=inv(D-L)*b;
+            x1=T*x0+C;
+        end
+        E(c+2)=norm((x1-x0)/x1,'inf');
+        error=E(c+2);
+        x0=x1
+        c=c+1;
+
+        n(c+1)=c;
+        Xt(:,c+1)=x0;
     end
 
-    %la convertimos en los coeficientes
-    coef= diag(Tabla,+1);
 
-    pol=1;
-    acum=pol;
-    pol=coef(1)*acum;
-    for i=1:n-1
-        pol=[0 pol];
-        acum=conv(acum,[1 -x(i)]);
-        pol=pol+coef(i+1)*acum;
+    % Calcula el radio espectral
+    radio = max(abs(eig(T)));
+
+    D=[n' Xt' E'];
+    tabla = table(n', Xt', E', 'VariableNames', {'Iteracion', 'x' 'Error'});
+
+    csv_file_path = "tables/tabla_gauss-seidel.csv";
+
+    writetable(tabla, csv_file_path)
+
+    if error < Tol
+        s=x0;
+        n=c;
+        s
+        fprintf('es una aproximación de la solución del sistmea con una tolerancia= %f',Tol)
+    else 
+        s=x0;
+        n=c;
+        fprintf('Fracasó en %f iteraciones',niter) 
     end
-
-% Generar valores de x
-xpol=x(1):0.001:x(end);
-
-p =zeros(size(x));
-p = p';
-
-
-% Calcular el polinomio para cada grado
-for i = 1:length(pol)
-    p = p+pol(i) * xpol.^(length(pol)-i);
-
-end
-
-
-
-    figure
-    plot(x,y,'r*',xpol,p,'b')
-
-    csv_file_path = "tables\tabla_newtonInt.csv";
-
-    writematrix(Tabla, csv_file_path)
-
-    writematrix(pol,'pol_newtonInter.csv')
 end

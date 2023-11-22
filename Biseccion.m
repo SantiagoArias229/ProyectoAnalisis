@@ -13,6 +13,8 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter,error)
     %f(x)=exp(-x-2)-2*x-2;
     fi=eval(subs(f,xi));
     fs=eval(subs(f,xs));
+
+    % se evalua la funcion en el intervalo, para ver si alguno es la raiz
     if fi==0
         s=xi;
         E=0;
@@ -21,10 +23,12 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter,error)
         s=xs;
         E=0;
         fprintf('%f es raiz de f(x)',xs)
+     
+    %signos opuestos para la evaluacion del intervalo
     elseif fs*fi<0
         c=0;
         xm=(xi+xs)/2;
-        fm(c+1)=eval(subs(f,xm));
+        fm(c+1)=eval(subs(f,xm)); %aproximacion 
         fe=fm(c+1);
         E(c+1)=Tol+1;
         error=E(c+1);
@@ -37,7 +41,7 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter,error)
         Error = [];
 
 
-        while error>Tol && fe~=0 && c<niter
+        while error>Tol && fe~=0 && c<niter % fm = 0, se hayo la raiz
             Iteration = [Iteration,c]; 
             a = [a,xi];
             b = [b, xs]; 
@@ -45,14 +49,14 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter,error)
             func = [func, fe]; 
             Error = [Error, error]; 
             
-            if fi*fe<0
+            if fi*fe<0 %[xa, xm]
                 xs=xm;
                 fs=eval(subs(f,xs));
-            else
+            else  %[xm, xb]
                 xi=xm;
                 fi=eval(subs(f,xi));
             end
-            xa=xm;
+            xa=xm; % valor iteracion anterior para calcular error
             xm=(xi+xs)/2;
             fm(c+2)=eval(subs(f,xm));
             fe=fm(c+2);
