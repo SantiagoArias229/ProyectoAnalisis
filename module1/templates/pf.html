@@ -37,8 +37,9 @@
         <br>
         En particular se puede utilizar para determinar raíces de una función de la forma f(x), siempre y cuando se cumplan los criterios de convergencia. 
         <br>
+        <h6>Recuerda que para que este método converja es necesario que |g'(x)|< 1 y que el valor ingresado en x0 este cerca al punto fijo. </h6>
         <h6>
-            Recuerda utilizar la sintaxis de Matlab
+            Recuerda utilizar la sintaxis de Matlab con un máximo de 100 iteraciones
         </h6>
     </div>
     <br>
@@ -83,6 +84,11 @@
                         <td>{{ row.xi}}</td>
                         <td>{{ row.fxi }}</td>
                         <td>{{ row.Error }}</td>
+                        {% if row.Iteration > 98 %}
+                            <script>                                   
+                                alert("Fracasó. Este método no ha logrado converger con los valores que ingresaste. Valida que estos cumplan con las condiciones descritas en el método");                                
+                            </script>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -107,5 +113,9 @@
     {% endif %}
 {% endblock %}
 
-    
+<script>
+    function alert(){        
+        alert("Fracasó. Este método no ha logrado converger con los valores que ingresaste. Valida que estos cumplan con las condiciones descritas en el método");
+    }
+</script>
 
