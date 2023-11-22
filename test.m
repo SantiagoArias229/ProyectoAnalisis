@@ -1,12 +1,9 @@
 %Newtonint: Calcula los coeficienetes del polinomio de interpolación de
 % grado n-1 para el conjunto de n datos (x,y), mediante el método de Newton
 % con diferencias divididas.
-function [Tabla] = Newtonint(x,y)
+function [Tabla] = test(x,y)
 
 format short
-
-    x = cell2mat(x);
-    y = cell2mat(y);
 
     %number of points
     n=length(x);
@@ -32,28 +29,23 @@ format short
         pol=pol+coef(i+1)*acum;
     end
 
-        % Generar valores de x
-        xpol=x(1):0.001:x(end);
-        
-        p =zeros(size(x));
-        p = p';
-        
-        
-        % Calcular el polinomio para cada grado
-        for i = 1:length(pol)
-            p = p+pol(i) * xpol.^(length(pol)-i);
-        
-        end
+% Generar valores de x
+xpol=x(1):0.001:x(end);
+
+p =zeros(size(x));
+p = p';
+
+
+% Calcular el polinomio para cada grado
+for i = 1:length(pol)
+    p = p+pol(i) * xpol.^(length(pol)-i);
+
+end
 
 
 
     figure
-    hold on
     plot(x,y,'r*',xpol,p,'b')
-
-    img = getframe(gcf);
-    imwrite(img.cdata, './media/grafica_newtonInter.png');
-    hold off
 
     csv_file_path = "tables\tabla_newtonInt.csv";
 

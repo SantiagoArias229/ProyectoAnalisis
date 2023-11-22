@@ -6,6 +6,7 @@ from .models import *
 import matlab.engine
 import pandas as pd
 import json
+import csv
 
 from proyecto_analisis.settings import BASE_DIR
 import os
@@ -30,6 +31,30 @@ def vector_a_string(vector):
         resultado += " ".join(map(str, vector[i]))
     resultado += "]"
     return resultado
+
+def construir_polinomio_newton(csv_newton):
+    with open('pol_newtonInter.csv', 'r') as archivo_csv:
+        reader = csv.reader(archivo_csv, delimiter=',')
+        valores = next(reader)  # Suponiendo que hay solo una línea en el archivo
+    
+    polinomio = ""
+    
+    n = len(valores)
+    i = 1
+    
+    for coef in valores:
+        if n-i == 1:
+            polinomio = polinomio + f"{coef}x+"
+        if coef != 0:
+            polinomio = polinomio + f"{coef}x^{n-i}+"
+        
+        i += 1
+    
+    len_pol = len(polinomio)
+    polinomio = polinomio[:len_pol-1]
+    
+    return polinomio
+
 
 def home(request):
     return render(request, "home.html")
@@ -70,24 +95,26 @@ def pf(request):
 
 def rf(request):
     if request.method == "POST":
-            eng = matlab.engine.start_matlab()
+    
 
-            result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
-            
-            df = pd.read_csv('tables/tabla_rf.csv')
-            df = df.astype(str)
-            data = df.to_dict(orient='records')
-            
+        eng = matlab.engine.start_matlab()
 
-            rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
-            rf_model.save()
-            context = {
-                'rf_model': rf_model,
-                'data': data,
-                'settings': settings,
-            }        
-            eng.quit()
-            return render(request, "rf.html", context)
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        
+        df = pd.read_csv('tables/tabla_rf.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+
+        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+        rf_model.save()
+        context = {
+            'rf_model': rf_model,
+            'data': data,
+            'settings': settings,
+        }        
+        eng.quit()
+        return render(request, "rf.html", context)
     else:
         return render(request, "rf.html")
 
@@ -137,7 +164,7 @@ def Table(file_name, tol, niter):
 
 def secante(request):
     if request.method == "POST":
-       
+    
 
         eng = matlab.engine.start_matlab()
 
@@ -170,7 +197,7 @@ def biseccion(request):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]))
+        result = eng.Biseccion(str(request.POST["func"]) ,float(request.POST["xi"]), float(request.POST["xs"]), float(request.POST["tol"]), float(request.POST["iteraciones"]), float(request.POST["error"]))
         
         
         df = pd.read_csv('tables/tabla_biseccion.csv')
@@ -197,7 +224,7 @@ def raices_multiples(request):
 
         eng = matlab.engine.start_matlab()
 
-        result = eng.raicesMultiples(float(request.POST["x0"]) , float(request.POST["tol"]), float(request.POST["iteraciones"]),str(request.POST["func"]))
+        result = eng.raicesMultiples(float(request.POST["x0"]) , float(request.POST["tol"]), float(request.POST["iteraciones"]),str(request.POST["func"]), float(request.POST["error"]))
         
         df = pd.read_csv('tables/tabla_raicesMultiples.csv')
         df = df.astype(str)
@@ -324,9 +351,36 @@ def lagrangem(request):
         return JsonResponse({"columnas": columnas, "datos": data}, safe=False)  
     else:
         return render(request, 'Module3/lagrange.html')
-    
+
+
+
 def newtonint(request):
-    return render(request, "Module2/newtonint.html")
+    if request.method == 'POST':
+        cantidad_puntos = int(request.POST['cantidadPuntos'])
+        vector_x = []
+        vector_y = []
+
+
+        for i in range(cantidad_puntos):
+            coordenada_x = float(request.POST[f'coordenadaX_{i}'])
+            coordenada_y = float(request.POST[f'coordenadaY_{i}'])
+            
+            vector_x.append(coordenada_x)
+            vector_y.append(coordenada_y)
+            
+            
+        
+        eng = matlab.engine.start_matlab()
+        rest = eng.Newtonint(vector_x, vector_y)
+
+        polinomio_final = construir_polinomio_newton('pol_newtonInter.csv')
+        
+        eng.quit()
+
+        return render(request, "Module3/newtonint.html", {'polinomio':polinomio_final})
+    
+    else:
+        return render(request, "Module3/newtonint.html")
 
 def jacobi(request):
     return render(request, 'Module2/jacobi.html')
@@ -397,7 +451,7 @@ def cubico(request):
         y=y.replace(' ','')
         print(x)
         print(y)
-       
+
         yFile=open("puntosY.txt",'w')
         yFile.write(y)
         yFile.close()
@@ -438,3 +492,5 @@ def Data(image_name, csv_name):
     if(os.path.isfile(destination_path)):
         os.remove(destination_path)
     os.rename(file_path, destination_path)
+
+

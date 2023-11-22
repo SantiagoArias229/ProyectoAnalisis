@@ -1,7 +1,7 @@
 %Bisección: se ingresa el valor inicial y final del intervalo (xi, xs), la tolerancia del error (Tol) y el màximo nùmero de iteraciones (niter) 
 
 
-function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
+function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter,error)
 
     syms x
 
@@ -44,9 +44,7 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
             Xm = [Xm, xm]; 
             func = [func, fe]; 
             Error = [Error, error]; 
-
-
-
+            
             if fi*fe<0
                 xs=xm;
                 fs=eval(subs(f,xs));
@@ -58,8 +56,15 @@ function [respuesta,s,E,fm] = Biseccion(func,xi,xs,Tol,niter)
             xm=(xi+xs)/2;
             fm(c+2)=eval(subs(f,xm));
             fe=fm(c+2);
+
+            if(error==1)
+            E(c+2)=abs((xm-xa)/xm);
+            error=E(c+2);            
+            else 
             E(c+2)=abs(xm-xa);
             error=E(c+2);
+            end
+            
             c=c+1;
 
 
