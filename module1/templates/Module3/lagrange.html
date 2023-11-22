@@ -36,6 +36,9 @@
 
     <h2 class="text-center">Metodo de interpolación de lagrange</h2>
 
+    <p>Debes ingresar por lo menos dos puntos para la ejecución de este método</p>
+    <p>Nota: Intenta no utilizar puntos repetidos ya que esto podría generar resultados inesperados en el polinomio</p>
+
     <!-- Formulario para definir el tamaño de la matriz -->
     <form id="tamanioForm" class="form-inline mb-3">
         <div class="form-group mr-2">
@@ -62,7 +65,22 @@
 
     <button onclick='guardarMatrices();' class='btn btn-success'>Ejecutar Metodo</button>
 
+    <h3> Polinomio </h3>
 
+    <table class="table table-bordered" id="tablaDatos">
+        <thead>
+            <tr>
+                <tr id="encabezado"></tr>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="miDiv" style="display: block;">
+        <div class="col-md 6">
+            <h5>Grafica del polinomio</h5>
+        </div>       
+    </div>
 
     <script>
         function generarVectorx() {
@@ -120,8 +138,25 @@ function guardarMatrices() {
             vectory: JSON.stringify(vectory),
         },
         headers: { "X-CSRFToken": csrftoken },
-        success: function(response) {
-            //console.log("Matrices guardadas con éxito:", response);
+        success: function(data) {
+            // Llenar el encabezado de la tabla con las columnas
+            var encabezado = $('#encabezado');
+            $.each(data.columnas, function(index, columna) {
+                encabezado.append('<th>' + columna + '</th>');
+            });
+
+            // Llenar la tabla con los datos recibidos
+            var tbody = $('#tablaDatos tbody');
+            $.each(data.datos, function(index, fila) {
+                var tr = $('<tr>');
+                $.each(data.columnas, function(index, columna) {
+                    tr.append('<td>' + fila[columna] + '</td>');
+                });
+                tbody.append(tr);
+            });
+            // Mostrar el div si la respuesta es exitosa
+            graph = '/media/grafica_lagrange.png'
+             $("#miDiv").html('<img src="' + graph + '" alt="Imagen">');         
         },
         error: function(xhr, error) {
             console.log(xhr.responseText); 
