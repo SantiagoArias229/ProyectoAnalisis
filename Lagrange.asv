@@ -2,8 +2,6 @@
 % grado n-1 para el conjunto de n datos (x,y), mediante el método de
 % lagrange.
 function [pol] = Lagrange(vectorx,vectory)
-    disp=(vectorx);
-    disp=(vectory);
     xv = str2num(vectorx);
     yv = str2num(vectory);
     n=length(xv);

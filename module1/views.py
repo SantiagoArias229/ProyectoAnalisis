@@ -271,19 +271,17 @@ def sor(request):
         x0 = matriz_a_string(matX0)
         
         result = eng.sor(x0, A, b, float(tol), float(niter), float(w), error)
-        print(result)
+        eng.quit()  
 
         df = pd.read_csv('tables/tabla_sor.csv')
         df = df.astype(str)
-        data = df.to_dict(orient='records')
-        eng.quit()  
+        data = df.to_dict(orient='records')        
         
         columnas = df.columns.tolist()
         
-        return JsonResponse({"columnas": columnas, "datos": data}, safe=False)  
+        return JsonResponse({"columnas": columnas, "datos": data, "radio": result}, safe=False)  
     else:
         return render(request, 'Module2/sor.html')
-
 
 # Metodo para gauss-seidel
 @csrf_exempt
@@ -309,8 +307,7 @@ def gs(request):
         b = matriz_a_string(matB)
         x0 = matriz_a_string(matX0)
         
-        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))
-        
+        result = eng.MatGaussSeid(x0, A, b,float(tol), float(niter))       
         
         
         df = pd.read_csv('tables/tabla_gauss-seidel.csv')
@@ -326,9 +323,7 @@ def gs(request):
 
 @csrf_exempt
 def lagrangem(request):
-    print("Hola dede la vista antes del if")
     if request.method == 'POST':
-        print("Holaadesde la vista")
         x = json.loads(request.POST.get('vectorx'))
         y = json.loads(request.POST.get('vectory'))        
         
@@ -343,14 +338,18 @@ def lagrangem(request):
         vx = vector_a_string(matx)
         vy = vector_a_string(maty)
         
+        print(vx)
+        print(vy)
         result = eng.Lagrange(vx, vy)
+        eng.quit()
 
-        # csv_file = open('data_iterativos.csv', 'r')
-        # data = csv_file.readlines()
+        df = pd.read_csv('tables/tabla_lagrange.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+
+        columnas = df.columns.tolist()
         
-        print(result)                        
-        
-        return redirect(request.path_info)
+        return JsonResponse({"columnas": columnas, "datos": data}, safe=False)  
     else:
         return render(request, 'Module3/lagrange.html')
 
