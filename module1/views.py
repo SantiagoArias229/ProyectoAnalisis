@@ -93,30 +93,7 @@ def pf(request):
     else:
         return render(request, "pf.html")
 
-def rf(request):
-    if request.method == "POST":
-    
 
-        eng = matlab.engine.start_matlab()
-
-        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
-        
-        df = pd.read_csv('tables/tabla_rf.csv')
-        df = df.astype(str)
-        data = df.to_dict(orient='records')
-        
-
-        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
-        rf_model.save()
-        context = {
-            'rf_model': rf_model,
-            'data': data,
-            'settings': settings,
-        }        
-        eng.quit()
-        return render(request, "rf.html", context)
-    else:
-        return render(request, "rf.html")
 
 def newton1(request):
     if (request.method == 'POST'):
@@ -243,6 +220,30 @@ def raices_multiples(request):
 
     else:
         return render(request, "rm.html")
+def rf(request):
+    if request.method == "POST":
+    
+
+        eng = matlab.engine.start_matlab()
+
+        result = eng.secante(str(request.POST["func"]) ,float(request.POST["x0"]), float(request.POST["x1"]), float(request.POST["Tol"]), float(request.POST["niter"]),float(request.POST["Terror"]))
+        
+        df = pd.read_csv('tables/tabla_rf.csv')
+        df = df.astype(str)
+        data = df.to_dict(orient='records')
+        
+
+        rf_model = secanteModel(func = request.POST["func"], x0 = request.POST["x0"], x1=request.POST["x1"], Tol = request.POST["Tol"], niter = request.POST["niter"], Terror=request.POST["Terror"],resultado=result)
+        rf_model.save()
+        context = {
+            'rf_model': rf_model,
+            'data': data,
+            'settings': settings,
+        }        
+        eng.quit()
+        return render(request, "rf.html", context)
+    else:
+        return render(request, "rf.html")
 
 @csrf_exempt
 def sor(request):
@@ -383,11 +384,30 @@ def newtonint(request):
     else:
         return render(request, "Module3/newtonint.html")
 
-def jacobi(request):
-    return render(request, 'Module2/jacobi.html')
 
 def vandermonde(request):
-    return render(request, 'Module3/vandermonde.html')
+    if request.method == 'POST':
+        cantidad_puntos = int(request.POST['cantidadPuntos'])
+        vector_x = []
+        vector_y = []
+
+
+        for i in range(cantidad_puntos):
+            coordenada_x = float(request.POST[f'coordenadaX_{i}'])
+            coordenada_y = float(request.POST[f'coordenadaY_{i}'])
+            
+            vector_x.append(coordenada_x)
+            vector_y.append(coordenada_y)
+            
+            
+        
+        eng = matlab.engine.start_matlab()
+        rest = eng.Newtonint(vector_x, vector_y)
+        
+        return render(request, "Module3/vandermonde.html", context)
+
+    else:
+        return render(request, "Module3/vandermonde.html")
 
 
 @csrf_exempt   

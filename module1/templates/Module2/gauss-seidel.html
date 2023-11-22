@@ -62,8 +62,7 @@
                     Módulo #2
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="/modulo1">Jacobi</a></li>
-                    <li><a class="dropdown-item" href="{% url 'gs' %}">Gauss-Seidel</a></li>
+                    <li><a class="dropdown-item" href="{% url 'gs' %}">Gauss-Seidel y Jacobi</a></li>
                     <li><a class="dropdown-item" href="{% url 'sor' %}">SOR</a></li>
                     </ul>
                 </li>
@@ -72,11 +71,11 @@
                     Módulo #3
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="/modulo1">Vandermonde</a></li>
-                    <li><a class="dropdown-item" href="{% url 'newtonint' %}">Newton</a></li>
-                    <li><a class="dropdown-item" href="{% url 'lagrangem' %}">Lagrange</a></li>
-                    <li><a class="dropdown-item" href="/modulo3">Lineal</a></li>
-                    <li><a class="dropdown-item" href="/modulo3">Cubico</a></li>
+                        <li><a class="dropdown-item" href="{% url 'vandermonde' %}">Vandermonde</a></li>
+                        <li><a class="dropdown-item" href="{% url 'newtonint' %}">Newton</a></li>
+                        <li><a class="dropdown-item" href="{% url 'lagrangem' %}">Lagrange</a></li>
+                        <li><a class="dropdown-item" href="{% url 'lineal' %}">Lineal</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cubico' %}">Cubico</a></li>
                     </ul>
                 </li>
                 </ul>
@@ -86,7 +85,7 @@
 
 
     <div class="container mt-4">
-        <h2 class="text-center">Metodo Gauss-Seidel</h2>
+        <h2 class="text-center">Metodos de Gauss-Seidel y Jacobi</h2>
         <p>Jacobi: es un método iterativo para resolver sistemas de ecuaciones lineales más simple y se aplica sólo a sistemas cuadrados, es decir, a sistemas con tantas incógnitas como ecuaciones.</p>
         <p>Gauss-Seidel: es muy semejante al método de Jacobi. Mientras que en el de Jacobi se utiliza el valor de las incógnitas para determinar una nueva aproximación, en el de Gauss-Seidel se va utilizando los valores de las incógnitas recien calculados en la misma iteración, y no en la siguiente.</p>
         <!-- Formulario para definir el tamaño de la matriz -->

@@ -108,8 +108,13 @@ class newtonintModel(models.Model):
 
 
 class vandermondemodel(models.Model):
-    x = models.JSONField()
-    y = models.JSONField()
+   xin = models.CharField(max_length=255)
+   yin = models.CharField(max_length=255)
+
+   resultado = models.CharField(max_length=300,default=" ")
+   def __str__(self):
+        return f"La función : en el intervalo de {self.xin} a {self.xin} en  iteraciones tiene como resultado:"
+
 
 
 

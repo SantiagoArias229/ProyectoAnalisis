@@ -15,7 +15,7 @@ urlpatterns = [
     path('sor/', views.sor, name='sor'),
     path('gauss-seidel/', views.gs, name='gs'),
     path('newton-interpolante/', views.newtonint, name="newtonint"),
-    path('jacobi/', views.jacobi, name="jacobi"),
+    
     
     #MODULE 3
     path('lagrangem/', views.lagrangem, name='lagrangem'),

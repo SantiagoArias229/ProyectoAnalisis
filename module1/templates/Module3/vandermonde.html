@@ -1,4 +1,5 @@
 {% extends 'home.html' %}
+{% load static %}
 {% block content %}
 {% block title %}
 <Secante>
@@ -41,60 +42,50 @@
 
 <body>
     <div class="title-container">
-        <h1 class="title text-gray-900 display-4">Método de la secante</h1>
+        <h1 class="title text-gray-900 display-4">Método de Vandermonde</h1>
     </div>
     <div class="subtitle text-gray-700 display-6">
-        El método numérico de la secante es un método iterativo que se utiliza para encontrar las raíces de una función. El método comienza con dos puntos iniciales, a y b, y luego calcula el punto medio de la secante que pasa por estos dos puntos. Este punto medio se utiliza como el nuevo punto inicial para la siguiente iteración. El proceso se repite hasta que se alcanza la raíz deseada.Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos. </div>
+        
+    El método de Vandermonde es un método para resolver sistemas de ecuaciones lineales cuya matriz de coeficientes es una matriz de Vandermonde. Una matriz de Vandermonde es una matriz que tiene una progresión geométrica en cada fila..Recuerda usar la <strong> SINTAXIS DE MATLAB</strong> para rellenar los campos. </div>
     <br>
 
-    <div class="container-fluid col-md-6">
-        <br>
-        <form action="" method="POST">
+    <div class="container mt-5">
+        <form id="formularioPuntos" method="post" action="{% url 'vandermonde' %}">
             {% csrf_token %}
-            <input type="text" name="func" class="form-control" placeholder="Función">
+            
+            <div class="form-group">
+                <label for="cantidadPuntos">Cantidad de Puntos:</label>
+                <input type="number" class="form-control" id="cantidadPuntos" name="cantidadPuntos" min="1" required>
+            </div>
             <br>
-            <input type="number" name="x0" class="form-control" placeholder="a">
-            <br>
-            <input type="number" name="x1" class="form-control" placeholder="b">
-            <br>
-            <input type="text" name="Tol" class="form-control" placeholder="Tolerancia">
-            <br>
-            <input type="number" name="niter" class="form-control" placeholder="Iteraciones">
-            <br>
-            <p class="subtitle text-gray-700 display-6">El tipo de error está dado por 0 para error absoluto y 1 para error relativo. Ingrese el que corresponda, al ingresar un valor invalido por defecto se tomará el error relativo.</p>
-            <input type="number" name="Terror" class="form-control" placeholder="Tipo de Error">
-            <br>
-            <div class="text-center">
-                <input type="submit" value="Ejecutar" class="btn btn-primary mt-3">
-              </div>
-        </form>
+            
+            <button type="button" class="btn btn-primary" onclick="agregarCampos()">Agregar Campos</button>
+    
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5>Coordenada X</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Coordenada Y</h5>
+                    </div>
+                </div>
+            </div>
 
+            <div id="camposPuntos" class="mt-3">
+                <!-- Aquí se agregarán los campos dinámicamente -->
+            </div>
+    
+            <button type="submit" class="btn btn-success mt-3">Enviar Puntos</button>
+        </form>
+        <script src="{% static 'js/vandermonde.js' %}"></script>
     </div>
 
     <div class="container md-6">
-    {% if secante_model %}
+    {% if vandermonde_model %}
             <h2>Resultado</h2>
             
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Iteration</th>
-                        <th>xn</th>
-                        <th>fxn</th>
-                        <th>E</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in data %}
-                    <tr>
-                        <td>{{ row.Iteration }}</td>
-                        <td>{{ row.xn }}</td>
-                        <td>{{ row.fxn }}</td>
-                        <td>{{ row.E }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            
             {% endif %} 
 
             <div class="row mt-4">
@@ -103,10 +94,10 @@
                     <br>
                     <b>{{ secante_model.resultado }}</b>
                 </div>
-                {% if "Fracasó" not in secante_model.resultado %}
+                {% if "Fracasó" not in vandermonde_model.resultado %}
                 <div class="col-md 6">
                     <h5>Grafica de la funcion {{ secante_model.func }}</h5>
-                    <img src="/media/grafica_secante.png" class="img-thumbnail rounded float-end" alt="Imagen">
+                    <img src="/media/grafica_vandermonde.png" class="img-thumbnail rounded float-end" alt="Imagen">
                 </div>
             </div>
 
@@ -114,7 +105,7 @@
 
     </div>
 
-    {% endif %}
+    {% endif %} 
 {% endblock %}
 </body>
 </html>

@@ -1,8 +1,11 @@
 function [respuesta] = vander(xin, yin)
-    x = xin;
-    y = yin;
-    V = vander(x);
+    j = str(xin);
+    k = str(yin);
+    x = str2num(j)';
+    y = str2num(k)';
+    
 
+    V = vander(x);
     Polinomio = V\y;
     Polinomio = Polinomio';
     T = array2table(Polinomio);
@@ -13,7 +16,7 @@ function [respuesta] = vander(xin, yin)
     xlabel('x');
     ylabel('y');
     img = getframe(gcf);
-    imwrite(img.cdata, './media/grafica_vander.png');
-    respuesta=sprintf('Estos son los polinomios generados:');
-    writetable(T, 'tables/tabla_vander.csv');
+    imwrite(img.cdata, 'grafica_vander.png');
+    respuesta=sprintf('Estos son los polinomios generados= %f \n',Polinomio)
+    writetable(T, 'tabla_vander.csv');
 end
